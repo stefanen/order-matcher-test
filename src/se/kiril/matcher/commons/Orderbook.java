@@ -5,8 +5,12 @@ import java.util.ArrayList;
 public class Orderbook {
 	private ArrayList<Order> bidsHeap = new ArrayList<Order>();
 	private ArrayList<Order> asksHeap = new ArrayList<Order>();
+
+
+
+
 	public Orderbook(){
-		
+
 	}
 	public void addOrder(Order pOrd){
 		if (pOrd.getSide() == 'B'){
