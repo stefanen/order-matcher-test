@@ -3,9 +3,14 @@ package se.kiril.ob.orderbook;
 import java.util.ArrayList;
 
 public class Book {
+
+    @Deprecated
 	private ArrayList<Order> bidsHeap = new ArrayList<Order>();
+    @Deprecated
 	private ArrayList<Order> asksHeap = new ArrayList<Order>();
 
+
+    
 
 
 
