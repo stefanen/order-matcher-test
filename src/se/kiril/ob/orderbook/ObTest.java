@@ -1,18 +1,16 @@
-package se.kiril.matcher.orderbook;
+package se.kiril.ob.orderbook;
 
 import java.io.IOException;
 
-import se.kiril.matcher.commons.Order;
-import se.kiril.matcher.commons.Orderbook;
-import se.kiril.matcher.parser.ParseFile;
-import se.kiril.matcher.parser.ParseMessage;
+import se.kiril.ob.inputs.fs.ParseFile;
+import se.kiril.ob.inputs.fs.ParseMessage;
 
-public class MatcherTest {
+public class ObTest {
 	public static void main(String[] args) throws IOException{
 		long startTime = System.nanoTime();
 		/////////////
 		
-		Orderbook ob = new Orderbook();
+		Book ob = new Book();
 		ParseFile pf = new ParseFile("refInput.in");
 		
 		for (int i=0; i<pf.getNumberOfLines(); i++){

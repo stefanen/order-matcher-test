@@ -1,15 +1,15 @@
-package se.kiril.matcher.commons;
+package se.kiril.ob.orderbook;
 
 import java.util.ArrayList;
 
-public class Orderbook {
+public class Book {
 	private ArrayList<Order> bidsHeap = new ArrayList<Order>();
 	private ArrayList<Order> asksHeap = new ArrayList<Order>();
 
 
 
 
-	public Orderbook(){
+	public Book(){
 
 	}
 	public void addOrder(Order pOrd){

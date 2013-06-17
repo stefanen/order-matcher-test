@@ -1,4 +1,4 @@
-package se.kiril.matcher.parser;
+package se.kiril.ob.inputs.fs;
 
 import java.awt.List;
 import java.io.BufferedReader;

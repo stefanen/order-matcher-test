@@ -1,4 +1,4 @@
-package se.kiril.matcher.parser;
+package se.kiril.ob.inputs.fs;
 
 // message format:
 // "symbol side price quantity user"
