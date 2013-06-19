@@ -16,22 +16,23 @@ public class Limit {
 
     private LinkedList<Order> orders = new LinkedList<Order>();
 
-    public Limit(int price){
-        this.price = price;
+    public Limit(double pPrice){
+        this.price = pPrice;
     }
-    public void addOrderToLimit(Order ord){
-        if (validateOrder(ord)){
-
-        }else{
-            System.err.println("Wrong order (price)");
-        }
-
+    public void addOrderToLimit(Order pOrder){
+        orders.add(pOrder);
     }
-    private boolean validateOrder(Order ord){
-        if (ord.getLimit() == price){
-            return true;
-        }else{
-            return false;
-        }
+
+    public double getPrice(){
+        return price;
+    }
+    public int getSize() {
+        return size;
+    }
+    public void setSize(int size) {
+        this.size = size;
+    }
+    public void addToSize(int pVol){
+        this.size += pVol;
     }
 }
