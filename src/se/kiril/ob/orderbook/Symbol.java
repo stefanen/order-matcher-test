@@ -1,100 +1,114 @@
 package se.kiril.ob.orderbook;
 
-/**
- * Created with IntelliJ IDEA.
- * User: kiril
- * Date: 6/20/13
- * Time: 12:00 AM
- * To change this template use File | Settings | File Templates.
- */
-import java.util.ArrayList;
 
-import se.kiril.ob.orderbook.commons.LimitsBinTree;
+import java.util.Map;
+import java.util.TreeMap;
+
 
 public class Symbol {
 
     private String symbolName;
 
-    private LimitsBinTree bids = new LimitsBinTree();
-    private LimitsBinTree asks = new LimitsBinTree();
+    private Map<Double, Limit> bidLimits = new TreeMap<Double, Limit>();
+    private Map<Double, Limit> askLimits = new TreeMap<Double, Limit>();
 
     public Symbol(String pSymName){
         setSymbolName(pSymName);
     }
 
     public void addOrd(Order pOrd){
-        insertOrderToTree(pOrd);
+        addOrdToLimit(pOrd);
+    }
+    public void removeOrder(Order ord){
+        removeOrdFromLimit(ord);
+    }
+    public int getTotaNolLimits(){
+        return bidLimits.size() + askLimits.size();
     }
 
-
-    private void createNewLimit(char pSide, double pPrice, int pVol, Order pOrd){
-        Limit lim = new Limit(pPrice);
-        lim.addToSize(pVol);
-        lim.addOrderToLimit(pOrd);
-
-        if (pSide == 'B'){
-            bids.addLimit(lim);
+    private void createLimitAndAddOrd(Order ord){
+        Limit lim = new Limit(ord.getLimit());
+        lim.addOrderToLimit(ord);
+        if (ord.getSide() == 'B'){
+            bidLimits.put(lim.getPrice(), lim);
 
         }else{
-            asks.addLimit(lim);
+            askLimits.put(lim.getPrice(), lim);
         }
     }
-    private void insertOrderToTree(Order ord){
-        if (checkLimitExists(ord.getSide(), ord.getLimit())){
-            //add order to an existing limit
-            //!!!!
-        }else{
-            createNewLimit(ord.getSide(), ord.getLimit(), ord.getQty(), ord);
-        }
-    }
-
-    private boolean checkLimitExists(char pSide, double pLimit){
-        if (pSide == 'B'){ // check in bids tree
-            if (bids.search(pLimit) != null){
-                return true;
-            }else{
-                return false;
+    private void removeOrdFromLimit(Order ord){
+        if (ord.getSide()== 'B'){ // bids side
+            bidLimits.get(ord.getLimit()).removeOrderFromLimit(ord);
+            if(bidLimits.get(ord.getLimit()).getSize() <= 0){
+                bidLimits.remove(ord.getLimit()); // if the limit qty is <= 0, limit is removed
             }
-        }else{ // check in asks tree
-            if (asks.search(pLimit) != null){
-                return true;
-            }else{
-                return false;
+        }else{ // asks side
+            askLimits.get(ord.getLimit()).removeOrderFromLimit(ord);
+            if(askLimits.get(ord.getLimit()).getSize() <= 0){
+                askLimits.remove(ord.getLimit()); // if the limit qty is <= 0, limit is removed
             }
         }
     }
 
-//	public void setOrderQty(String pOrdId, int pQty){
-//		if (pOrdId.charAt(pOrdId.length()-1)=='B'){ // searching the bids heap
-//			if (pQty <= 0){ // if passed quantity <= 0 remove order
-//				for (int i=0; i<bidsHeap.size(); i++){
-//					if (bidsHeap.get(i).getOrdId().equals(pOrdId)){
-//						bidsHeap.remove(i);
+    private void addOrdToLimit(Order ord){
+        if (ord.getSide()=='B'){ // bids
+            if(bidLimits.containsKey(ord.getLimit())){ // limit already exists
+                bidLimits.get(ord.getLimit()).addOrderToLimit(ord);
+                // EXECUTE ORDER HERE
+                executeOrder(ord);
+            }else{ // limit doesnt exist yet
+                createLimitAndAddOrd(ord); // creating limit and adding an order
+                // EXECUTE ORDER HERE
+                executeOrder(ord);
+            }
+        }else{ // asks
+            if (askLimits.containsKey(ord.getLimit())){
+                askLimits.get(ord.getLimit()).addOrderToLimit(ord);
+                // EXECUTE ORDER HERE
+                executeOrder(ord);
+            }else{
+                createLimitAndAddOrd(ord);
+                // EXECUTE ORDER HERE
+                executeOrder(ord);
+            }
+        }
+    }
+    private void executeOrder(Order ord){
+        if (ord.getSide() == 'B'){ // if order is bid, look for a match in asks. Looking for a smaller or equal ask value
+
+            for (Map.Entry<Double, Limit> askLimit : askLimits.entrySet()){
+
+                if(ord.getLimit() >= askLimit.getKey()){
+                    askLimit.getValue().popFromInsideOfBook(35);
+//					if(askLimit.getValue().getSize() >= ord.getQty()){
+//						System.out.println("all in this limit");
+//						break;
 //					}
-//				}
-//			}else{ // else set the quantity
-//				for (int i=0; i<bidsHeap.size(); i++){
-//					if (bidsHeap.get(i).getOrdId().equals(pOrdId)){
-//						bidsHeap.get(i).setQty(pQty);
+//					else{
+//						System.out.println("moving on to next limit");
+//					}
+                }
+            }
+
+
+//			for (Map.Entry<Double, Limit> askLimitEntry : askLimits.entrySet()){
+//				if (askLimitEntry.getKey() <= ord.getLimit()){
+//
+//					if (askLimitEntry.getValue().getOldestOrder().getQty() >= ord.getQty()){
+//						askLimitEntry.getValue().reduceOrder(askLimitEntry.getValue().getOldestOrder(), ord.getQty());
+//						removeOrdFromLimit(ord);
+//						//break;
+//					}else{
+//						int t = ord.getQty();
+//						ord.reduceQty(askLimitEntry.getValue().getOldestOrder().getQty());
+//						askLimitEntry.getValue().reduceOrder(askLimitEntry.getValue().getOldestOrder(), t);
 //					}
 //				}
 //			}
-//		}else if (pOrdId.charAt(pOrdId.length()-1)=='S'){ // searching the asks heap
-//			if (pQty <= 0){ // if passed quantity <= 0 remove order
-//				for (int i=0; i<asksHeap.size(); i++){
-//					if (asksHeap.get(i).getOrdId().equals(pOrdId)){
-//						asksHeap.remove(i);
-//					}
-//				}
-//			}else{ // else set the quantity
-//				for (int i=0; i<asksHeap.size(); i++){
-//					if (asksHeap.get(i).getOrdId().equals(pOrdId)){
-//						asksHeap.get(i).setQty(pQty);
-//					}
-//				}
-//			}
-//		}
-//	}
+        }else{ // if order is ask, look for a match in bids. Looking for a bigger or equal bid value
+
+        }
+    }
 
     public String getSymbolName() {
         return symbolName;
@@ -106,4 +120,3 @@ public class Symbol {
 
 
 }
-

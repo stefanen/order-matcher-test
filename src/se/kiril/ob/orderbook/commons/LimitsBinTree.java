@@ -31,6 +31,15 @@ public class LimitsBinTree {
             return tmp.limit;
         }
     }
+    public Limit getLimit(double pPrice){
+        LimitNode ln = locate(rootNode, pPrice);
+        if (ln != null){
+            return ln.limit;
+        }else {
+            return null;
+        }
+
+    }
     public void populateBinTree(List<Limit> pList){
         rootNode = null;
         for (int i = 0; i< pList.size(); i++){
@@ -73,4 +82,3 @@ public class LimitsBinTree {
     }
 
 }
-

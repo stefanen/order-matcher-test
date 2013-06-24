@@ -5,7 +5,6 @@ import java.io.IOException;
 import se.kiril.ob.inputs.fs.ParseFile;
 import se.kiril.ob.inputs.fs.ParseMessage;
 import se.kiril.ob.orderbook.OrderBook;
-import se.kiril.ob.orderbook.Symbol;
 import se.kiril.ob.orderbook.Order;
 
 public class ObTest {
