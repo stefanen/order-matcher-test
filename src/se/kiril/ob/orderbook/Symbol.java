@@ -1,6 +1,7 @@
 package se.kiril.ob.orderbook;
 
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -9,7 +10,7 @@ public class Symbol {
 
     private String symbolName;
 
-    private Map<Double, Limit> bidLimits = new TreeMap<Double, Limit>();
+    private Map<Double, Limit> bidLimits = new TreeMap<Double, Limit>(Collections.reverseOrder());
     private Map<Double, Limit> askLimits = new TreeMap<Double, Limit>();
 
     public Symbol(String pSymName){
@@ -75,38 +76,36 @@ public class Symbol {
     }
     private void executeOrder(Order ord){
         if (ord.getSide() == 'B'){ // if order is bid, look for a match in asks. Looking for a smaller or equal ask value
-
+            int tradedQty = 0;
+            int remainingVol = ord.getQty();
             for (Map.Entry<Double, Limit> askLimit : askLimits.entrySet()){
-
-                if(ord.getLimit() >= askLimit.getKey()){
-                    askLimit.getValue().popFromInsideOfBook(35);
-//					if(askLimit.getValue().getSize() >= ord.getQty()){
-//						System.out.println("all in this limit");
-//						break;
-//					}
-//					else{
-//						System.out.println("moving on to next limit");
-//					}
+                if (remainingVol > 0 && askLimit.getValue().getPrice() < ord.getLimit()){
+                    int tVol = 0;
+                    tVol = askLimit.getValue().popFromInsideOfLimit(remainingVol);
+                    tradedQty += tVol;
+                    remainingVol -= tVol;
+                }else{
+                    break;
                 }
             }
-
-
-//			for (Map.Entry<Double, Limit> askLimitEntry : askLimits.entrySet()){
-//				if (askLimitEntry.getKey() <= ord.getLimit()){
-//
-//					if (askLimitEntry.getValue().getOldestOrder().getQty() >= ord.getQty()){
-//						askLimitEntry.getValue().reduceOrder(askLimitEntry.getValue().getOldestOrder(), ord.getQty());
-//						removeOrdFromLimit(ord);
-//						//break;
-//					}else{
-//						int t = ord.getQty();
-//						ord.reduceQty(askLimitEntry.getValue().getOldestOrder().getQty());
-//						askLimitEntry.getValue().reduceOrder(askLimitEntry.getValue().getOldestOrder(), t);
-//					}
-//				}
-//			}
-        }else{ // if order is ask, look for a match in bids. Looking for a bigger or equal bid value
-
+            ord.setQty(ord.getQty()-tradedQty);
+            bidLimits.get(ord.getLimit()).removeFromSize(tradedQty);
+        }else{ // if order is ask, look for a match in bids. Looking for a bigger or equal bid value.
+            // the bidLimit tree map is already reverse sorted
+            int tradedQty = 0;
+            int remainingVol = ord.getQty();
+            for (Map.Entry<Double, Limit> bidLimit : bidLimits.entrySet()){
+                if (remainingVol > 0 && bidLimit.getValue().getPrice() > ord.getLimit()){
+                    int tVol = 0;
+                    tVol = bidLimit.getValue().popFromInsideOfLimit(remainingVol);
+                    tradedQty += tVol;
+                    remainingVol -= tVol;
+                }else{
+                    break;
+                }
+            }
+            ord.setQty(ord.getQty()-tradedQty);
+            askLimits.get(ord.getLimit()).removeFromSize(tradedQty);
         }
     }
 

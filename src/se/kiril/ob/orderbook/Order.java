@@ -42,6 +42,18 @@ public class Order {
         long msSinceMidnight = now - c.getTimeInMillis();
         return msSinceMidnight;
     }
+    public int trade(int pVol){
+        int traded = 0;
+        if (pVol >= qty){
+            traded = qty;
+            qty = 0;
+            return traded;
+        }else{
+            traded = pVol;
+            qty -= pVol;
+            return traded;
+        }
+    }
     public void reduceQty(int pVol){
         qty -= pVol;
     }

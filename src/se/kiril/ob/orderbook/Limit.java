@@ -1,7 +1,6 @@
 package se.kiril.ob.orderbook;
 
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -22,27 +21,20 @@ public class Limit {
     public Limit(double pPrice){
         this.price = pPrice;
     }
-    //TODO
-    public int popFromInsideOfBook(int vol){
+    public int popFromInsideOfLimit(int vol){
         int tradedQty = 0;
         int remainingVol = vol;
-//    	for (Order order : orders){
-//    		if (remainingVol > 0){
-//    			int t = order.getQty();
-//        		order.reduceQty(remainingVol);
-//        		if(order.getQty() <= 0){
-//        			orders.remove(order);
-//        			
-//        			tradedQty += t;
-//        			remainingVol -= tradedQty;
-//        		}else{
-//        			tradedQty += t-order.getQty();
-//        			remainingVol -= tradedQty;
-//        		}
-//    		}else{
-//    			break;
-//    		}
-//    	}
+        for (Order order : orders){
+            if (remainingVol > 0){
+                int tVol = 0;
+                tVol = order.trade(remainingVol);
+                tradedQty += tVol;
+                remainingVol -= tVol;
+            }else{
+                break;
+            }
+        }
+        removeFromSize(tradedQty);
         return tradedQty;
     }
 
@@ -71,13 +63,10 @@ public class Limit {
     public int getSize() {
         return totalQty;
     }
-    private void setSize(int size) {
-        this.totalQty = size;
-    }
     private void addToSize(int pVol){
         this.totalQty += pVol;
     }
-    private void removeFromSize(int pVol){
+    public void removeFromSize(int pVol){
         this.totalQty -= pVol;
     }
 }
