@@ -1,6 +1,6 @@
 package se.kiril.ob.orderbook;
 
-
+import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
@@ -13,7 +13,6 @@ import java.util.LinkedList;
 public class Limit {
     private double price;
     private int totalQty;
-    //private int totalVolume;
 
     private LinkedList<Order> orders = new LinkedList<Order>();
 
@@ -34,11 +33,18 @@ public class Limit {
                 break;
             }
         }
+        clearEmptyOrders();
         removeFromSize(tradedQty);
         return tradedQty;
     }
-
-
+    //TODO
+    private void clearEmptyOrders(){
+        for (Iterator<Order> it = orders.iterator(); it.hasNext();){
+            if(it.next().getQty() <= 0){
+                it.remove();
+            }
+        }
+    }
     public void addOrderToLimit(Order pOrder){
         orders.add(pOrder);
         addToSize(pOrder.getQty());

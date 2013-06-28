@@ -24,6 +24,7 @@ public class OrderBook {
             symbols.get(ord.getSymbol()).addOrd(ord);
             ordersMap.put(ord.getOrdId(), ord);
         }
+
     }
     public void removeOrder(String ordId){
         removeOrderFromOb(ordersMap.get(ordId));
@@ -34,7 +35,7 @@ public class OrderBook {
         if (checkSymbolExists(ord.getSymbol())){
             symbols.get(ord.getSymbol()).removeOrder(ord);
             if (symbols.get(ord.getSymbol()).getTotaNolLimits() <= 0){
-                symbols.remove(ord.getSymbol()); // if no limits the symbol is deleted
+                symbols.remove(ord.getSymbol());
             }
         }else{
             System.err.println("Symbol doesn't exist in orderbook!");

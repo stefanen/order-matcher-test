@@ -15,10 +15,13 @@ public class Symbol {
 
     public Symbol(String pSymName){
         setSymbolName(pSymName);
+
     }
 
     public void addOrd(Order pOrd){
         addOrdToLimit(pOrd);
+        //TODO This is not very efficient, need to change it.
+        purgeEmptyLimits();
     }
     public void removeOrder(Order ord){
         removeOrdFromLimit(ord);
@@ -41,12 +44,12 @@ public class Symbol {
         if (ord.getSide()== 'B'){ // bids side
             bidLimits.get(ord.getLimit()).removeOrderFromLimit(ord);
             if(bidLimits.get(ord.getLimit()).getSize() <= 0){
-                bidLimits.remove(ord.getLimit()); // if the limit qty is <= 0, limit is removed
+                bidLimits.remove(ord.getLimit());
             }
         }else{ // asks side
             askLimits.get(ord.getLimit()).removeOrderFromLimit(ord);
             if(askLimits.get(ord.getLimit()).getSize() <= 0){
-                askLimits.remove(ord.getLimit()); // if the limit qty is <= 0, limit is removed
+                askLimits.remove(ord.getLimit());
             }
         }
     }
@@ -57,8 +60,8 @@ public class Symbol {
                 bidLimits.get(ord.getLimit()).addOrderToLimit(ord);
                 // EXECUTE ORDER HERE
                 executeOrder(ord);
-            }else{ // limit doesnt exist yet
-                createLimitAndAddOrd(ord); // creating limit and adding an order
+            }else{
+                createLimitAndAddOrd(ord);
                 // EXECUTE ORDER HERE
                 executeOrder(ord);
             }
@@ -74,8 +77,36 @@ public class Symbol {
             }
         }
     }
+    public void purgeEmptyLimits(){
+        clearEmptyAskLimits();
+        clearEmptyBidLimits();
+    }
+    private void clearEmptyAskLimits(){
+        if (!askLimits.isEmpty()){
+            Map<Double, Limit> tempMap = new TreeMap<Double, Limit>();
+            for (Map.Entry<Double, Limit> e : askLimits.entrySet()){
+                tempMap.put(e.getKey(), e.getValue());
+                if (e.getValue().getSize() <= 0){
+                    tempMap.remove(e.getKey());
+                }
+            }
+            askLimits = tempMap;
+        }
+    }
+    private void clearEmptyBidLimits(){
+        if (!bidLimits.isEmpty()){
+            Map<Double, Limit> tempMap = new TreeMap<Double, Limit>();
+            for (Map.Entry<Double, Limit> e : bidLimits.entrySet()){
+                tempMap.put(e.getKey(), e.getValue());
+                if (e.getValue().getSize() <= 0){
+                    tempMap.remove(e.getKey());
+                }
+            }
+            bidLimits = tempMap;
+        }
+    }
     private void executeOrder(Order ord){
-        if (ord.getSide() == 'B'){ // if order is bid, look for a match in asks. Looking for a smaller or equal ask value
+        if (ord.getSide() == 'B'){
             int tradedQty = 0;
             int remainingVol = ord.getQty();
             for (Map.Entry<Double, Limit> askLimit : askLimits.entrySet()){
@@ -88,10 +119,10 @@ public class Symbol {
                     break;
                 }
             }
+            //clearEmptyAskLimits(); //not very efficient
             ord.setQty(ord.getQty()-tradedQty);
             bidLimits.get(ord.getLimit()).removeFromSize(tradedQty);
-        }else{ // if order is ask, look for a match in bids. Looking for a bigger or equal bid value.
-            // the bidLimit tree map is already reverse sorted
+        }else{
             int tradedQty = 0;
             int remainingVol = ord.getQty();
             for (Map.Entry<Double, Limit> bidLimit : bidLimits.entrySet()){
@@ -104,6 +135,7 @@ public class Symbol {
                     break;
                 }
             }
+            //clearEmptyBidLimits(); /not very efficient
             ord.setQty(ord.getQty()-tradedQty);
             askLimits.get(ord.getLimit()).removeFromSize(tradedQty);
         }

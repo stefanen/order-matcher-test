@@ -3,7 +3,6 @@ package se.kiril.ob.orderbook;
 import java.util.Calendar;
 import java.util.Random;
 
-// timestamp, id, symbol, side, limit, quantity, user
 public class Order {
     private static volatile int ordSeqNr= 1;
 
