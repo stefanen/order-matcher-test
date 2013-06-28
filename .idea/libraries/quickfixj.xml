@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="quickfixj">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../quickfixj" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/../quickfixj/doc/api" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../quickfixj" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../quickfixj" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../quickfixj" recursive="false" type="SOURCES" />
+  </library>
+</component>

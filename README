@@ -1,3 +1,5 @@
-An orderbook test.
-The idea is to have scaling O(1) for the add, remove and exec operations, and O(log n)
-for the position requests. Once that's done the plan is to connect it to my quickfix server impl.
+An Orderbook test.
+Supports add / remove / execute of limit orders via the FIX protocol.
+To do:
+Account persistence (on a separate server)
+Iceberg orders, as per NYSE's specification
