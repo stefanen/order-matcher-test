@@ -1,0 +1,22 @@
+[DEFAULT]# Settings which apply to all the Sessions.
+ConnectionType=initiator
+LogonTimeout=30
+ReconnectInterval=30
+ResetOnLogon=Y
+FileLogPath=/home/krl/projects5/QFTest/QFTest/logs
+[SESSION]# Settings specifically for one session
+BeginString=FIX.4.2
+SenderCompID=CLIENT
+TargetCompID=BROKER
+StartDay=sunday
+EndDay=friday
+StartTime=00:00:00
+EndTime=00:00:00
+HeartBtInt=30
+CheckLatency=N
+MaxLatency=240
+SocketConnectPort=9878
+SocketConnectHost=127.0.0.1
+UseDataDictionary=Y
+DataDictionary=/home/krl/projects5/QFTest/QFTest/FIX42.xml
+FileStorePath=/home/krl/projects5/QFTest/QFTest

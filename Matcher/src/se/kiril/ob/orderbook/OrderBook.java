@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
-import se.kiril.ob.orderbook.Symbol;
-
 public class OrderBook {
 
     private Map<String, Symbol> symbols = new LinkedHashMap<String, Symbol>();

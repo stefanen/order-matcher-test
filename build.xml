@@ -1,0 +1,37 @@
+<project default="run">
+	<path id="project.class.path">
+		<!-- QuickfixJ libraries -->
+		<pathelement location="/home/krl/projects5/QFTest/quickfixj/quickfixj-all-1.5.3.jar"/>
+		<pathelement location="/home/krl/projects5/QFTest/quickfixj/lib/slf4j-api-1.6.3.jar"/>
+		<pathelement location="/home/krl/projects5/QFTest/quickfixj/lib/slf4j-jdk14-1.6.3.jar"/>
+		<pathelement location="/home/krl/projects5/QFTest/quickfixj/lib/mina-core-1.1.7.jar"/>
+		<!-- Project directory-->
+		<pathelement location="./src"/>
+	</path>
+	<target name="compile">
+		<javac srcdir="src">
+			<classpath refid="project.class.path"/>
+		</javac>
+	</target>
+	<target name="jar" depends="compile">
+		<jar destfile="OMS.jar" basedir="." includes="**/*.class">
+			<manifest>
+				<attribute name="Main-Class" value="OMS"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="run" depends="jar">
+		<java classname="OMS" fork="true">
+			<classpath refid="project.class.path"/>
+			<arg value="oms.cfg"/>
+		</java>
+	</target>
+
+	<target name="clean">
+		<delete>
+			<fileset dir="." includes="*.class"/>
+			<fileset dir="." includes="*.jar"/>
+		</delete>
+	</target>
+</project>
