@@ -1,5 +1,7 @@
 An Orderbook test.
-Supports add / remove / execute of limit orders via the FIX protocol.
+Supports add / remove / execute of limit and market orders.
+Support of the FIX protocol for incoming orders.
 To do:
-Account persistence (on a separate server)
-Iceberg orders, as per NYSE's specification
+Account persistence.
+Pegged orders, iceberg orders, as per NYSE's specification at 
+https://europeanequities.nyx.com/trading/order-types
