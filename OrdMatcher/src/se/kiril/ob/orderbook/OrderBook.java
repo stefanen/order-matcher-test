@@ -12,6 +12,8 @@ public class OrderBook {
     public OrderBook(){
 
     }
+    //TODO get total costs from executions
+    //TODO display bestbid bestask for instrtuments
     public void addOrder(Order ord){
         if(checkSymbolExists(ord.getSymbol())){
             symbols.get(ord.getSymbol()).addOrd(ord);

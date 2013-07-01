@@ -2,6 +2,8 @@ package se.kiril.ob.orderbook;
 
 
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -10,13 +12,17 @@ public class Symbol {
 
     private String symbolName;
 
-    private Map<Double, Limit> bidLimits = new TreeMap<Double, Limit>(Collections.reverseOrder());
-    private Map<Double, Limit> askLimits = new TreeMap<Double, Limit>();
+    private Map<Double, Limit> limitBids = new TreeMap<Double, Limit>(Collections.reverseOrder());
+    private Map<Double, Limit> limitAsks = new TreeMap<Double, Limit>();
+    
+    private LinkedList<Order> marketBids = new LinkedList<Order>();
+    private LinkedList<Order> marketAsks = new LinkedList<Order>();
 
     public Symbol(String pSymName){
         setSymbolName(pSymName);
 
     }
+    //TODO create execution reports
 
     public void addOrd(Order pOrd){
         addOrdToLimit(pOrd);
@@ -27,89 +33,185 @@ public class Symbol {
         removeOrdFromLimit(ord);
     }
     public int getTotaNolLimits(){
-        return bidLimits.size() + askLimits.size();
+        return limitBids.size() + limitAsks.size();
     }
 
     private void createLimitAndAddOrd(Order ord){
         Limit lim = new Limit(ord.getLimit());
         lim.addOrderToLimit(ord);
         if (ord.getSide() == 'B'){
-            bidLimits.put(lim.getPrice(), lim);
+            limitBids.put(lim.getPrice(), lim);
 
         }else{
-            askLimits.put(lim.getPrice(), lim);
+            limitAsks.put(lim.getPrice(), lim);
         }
     }
     private void removeOrdFromLimit(Order ord){
         if (ord.getSide()== 'B'){ // bids side
-            bidLimits.get(ord.getLimit()).removeOrderFromLimit(ord);
-            if(bidLimits.get(ord.getLimit()).getSize() <= 0){
-                bidLimits.remove(ord.getLimit());
+            limitBids.get(ord.getLimit()).removeOrderFromLimit(ord);
+            if(limitBids.get(ord.getLimit()).getSize() <= 0){
+                limitBids.remove(ord.getLimit());
             }
         }else{ // asks side
-            askLimits.get(ord.getLimit()).removeOrderFromLimit(ord);
-            if(askLimits.get(ord.getLimit()).getSize() <= 0){
-                askLimits.remove(ord.getLimit());
+            limitAsks.get(ord.getLimit()).removeOrderFromLimit(ord);
+            if(limitAsks.get(ord.getLimit()).getSize() <= 0){
+                limitAsks.remove(ord.getLimit());
             }
         }
     }
 
     private void addOrdToLimit(Order ord){
-        if (ord.getSide()=='B'){ // bids
-            if(bidLimits.containsKey(ord.getLimit())){ // limit already exists
-                bidLimits.get(ord.getLimit()).addOrderToLimit(ord);
-                // EXECUTE ORDER HERE
-                executeOrder(ord);
-            }else{
-                createLimitAndAddOrd(ord);
-                // EXECUTE ORDER HERE
-                executeOrder(ord);
+    	//=====MARKET ORDER=====
+    	if(ord.getOrdType()=='M'){
+    		if (ord.getSide()=='B'){ //bids
+    			marketBids.add(ord);
+    			//EXECUTE
+    			executeOrder(ord);
+    		}else{ //asks
+    			marketAsks.add(ord);
+    			//EXECUTE
+    			executeOrder(ord);
+    		}
+    	//=====LIMIT ORDER=====
+    	}else if (ord.getOrdType()=='L'){
+    		if (ord.getSide()=='B'){ // bids
+                if(limitBids.containsKey(ord.getLimit())){ // limit already exists
+                    limitBids.get(ord.getLimit()).addOrderToLimit(ord);
+                    // EXECUTE ORDER HERE
+                    executeOrder(ord);
+                }else{
+                    createLimitAndAddOrd(ord);
+                    // EXECUTE ORDER HERE
+                    executeOrder(ord);
+                }
+            }else{ // asks
+                if (limitAsks.containsKey(ord.getLimit())){
+                    limitAsks.get(ord.getLimit()).addOrderToLimit(ord);
+                    // EXECUTE ORDER HERE
+                    executeOrder(ord);
+                }else{
+                    createLimitAndAddOrd(ord);
+                    // EXECUTE ORDER HERE
+                    executeOrder(ord);
+                }
             }
-        }else{ // asks
-            if (askLimits.containsKey(ord.getLimit())){
-                askLimits.get(ord.getLimit()).addOrderToLimit(ord);
-                // EXECUTE ORDER HERE
-                executeOrder(ord);
-            }else{
-                createLimitAndAddOrd(ord);
-                // EXECUTE ORDER HERE
-                executeOrder(ord);
-            }
-        }
+    	//TODO
+    	//=====PEG ORDER=====
+    	}else if (ord.getOrdType()=='P'){
+    		
+    	}
     }
     public void purgeEmptyLimits(){
-        clearEmptyAskLimits();
-        clearEmptyBidLimits();
+    	//TODO This could be multithreaded
+        clearEmptyLimitAsks();
+        clearEmptyLimitBids();
+        clearEmptyMarketAsks();
+        clearEmptyMarketBids();
     }
-    private void clearEmptyAskLimits(){
-        if (!askLimits.isEmpty()){
+    private void clearEmptyMarketAsks(){
+    	if (!marketAsks.isEmpty()){
+    		for (Iterator<Order> it = marketAsks.iterator(); it.hasNext();){
+                if(it.next().getQty() <= 0){
+                    it.remove();
+                }
+            }
+    	}
+    }
+    private void clearEmptyMarketBids(){
+    	if (!marketBids.isEmpty()){
+    		for (Iterator<Order> it = marketBids.iterator(); it.hasNext();){
+                if(it.next().getQty() <= 0){
+                    it.remove();
+                }
+            }
+    	}
+    }
+    private void clearEmptyLimitAsks(){
+        if (!limitAsks.isEmpty()){
             Map<Double, Limit> tempMap = new TreeMap<Double, Limit>();
-            for (Map.Entry<Double, Limit> e : askLimits.entrySet()){
+            for (Map.Entry<Double, Limit> e : limitAsks.entrySet()){
                 tempMap.put(e.getKey(), e.getValue());
                 if (e.getValue().getSize() <= 0){
                     tempMap.remove(e.getKey());
                 }
             }
-            askLimits = tempMap;
+            limitAsks = tempMap;
         }
     }
-    private void clearEmptyBidLimits(){
-        if (!bidLimits.isEmpty()){
+    private void clearEmptyLimitBids(){
+        if (!limitBids.isEmpty()){
             Map<Double, Limit> tempMap = new TreeMap<Double, Limit>();
-            for (Map.Entry<Double, Limit> e : bidLimits.entrySet()){
+            for (Map.Entry<Double, Limit> e : limitBids.entrySet()){
                 tempMap.put(e.getKey(), e.getValue());
                 if (e.getValue().getSize() <= 0){
                     tempMap.remove(e.getKey());
                 }
             }
-            bidLimits = tempMap;
+            limitBids = tempMap;
         }
     }
     private void executeOrder(Order ord){
+    	if (ord.getOrdType()=='L'){
+    		executeLimitOrder(ord);
+    	}else if(ord.getOrdType()=='M'){
+    		executeMarketOrder(ord);
+    	}
+    }
+    
+    
+    private void executeMarketOrder(Order ord){
+    	if (ord.getSide()=='B'){ // bid
+    		int tradedQty = 0;
+    		int remainingVol = ord.getQty();
+    		for (Map.Entry<Double, Limit> askLimit : limitAsks.entrySet()){
+                if (remainingVol > 0){
+                    int tVol = 0;
+                    tVol = askLimit.getValue().popFromInsideOfLimit(remainingVol);
+                    tradedQty += tVol;
+                    remainingVol -= tVol;
+                }else{
+                    break;
+                }
+            }
+    		ord.setQty(ord.getQty()-tradedQty);
+            //bidLimits.get(ord.getLimit()).removeFromSize(tradedQty);
+    	}else{ // ask 
+    		int tradedQty = 0;
+            int remainingVol = ord.getQty();
+            for (Map.Entry<Double, Limit> bidLimit : limitBids.entrySet()){
+                if (remainingVol > 0){
+                    int tVol = 0;
+                    tVol = bidLimit.getValue().popFromInsideOfLimit(remainingVol);
+                    tradedQty += tVol;
+                    remainingVol -= tVol;
+                }else{
+                    break;
+                }
+            }
+            ord.setQty(ord.getQty()-tradedQty);
+            //askLimits.get(ord.getLimit()).removeFromSize(tradedQty);
+    	}
+    }
+    
+    
+    
+    private void executeLimitOrder(Order ord){
         if (ord.getSide() == 'B'){
             int tradedQty = 0;
             int remainingVol = ord.getQty();
-            for (Map.Entry<Double, Limit> askLimit : askLimits.entrySet()){
+            //Going through market orders first
+            for (Order order : marketAsks){
+                if (remainingVol > 0){
+                    int tVol = 0;
+                    tVol = order.trade(remainingVol);
+                    tradedQty += tVol;
+                    remainingVol -= tVol;
+                }else{
+                    break;
+                }
+            }
+            //Going through limits
+            for (Map.Entry<Double, Limit> askLimit : limitAsks.entrySet()){
                 if (remainingVol > 0 && askLimit.getValue().getPrice() < ord.getLimit()){
                     int tVol = 0;
                     tVol = askLimit.getValue().popFromInsideOfLimit(remainingVol);
@@ -119,13 +221,24 @@ public class Symbol {
                     break;
                 }
             }
-            //clearEmptyAskLimits(); //not very efficient
             ord.setQty(ord.getQty()-tradedQty);
-            bidLimits.get(ord.getLimit()).removeFromSize(tradedQty);
+            limitBids.get(ord.getLimit()).removeFromSize(tradedQty);
         }else{
             int tradedQty = 0;
             int remainingVol = ord.getQty();
-            for (Map.Entry<Double, Limit> bidLimit : bidLimits.entrySet()){
+          //Going through market orders first
+            for (Order order : marketBids){
+                if (remainingVol > 0){
+                    int tVol = 0;
+                    tVol = order.trade(remainingVol);
+                    tradedQty += tVol;
+                    remainingVol -= tVol;
+                }else{
+                    break;
+                }
+            }
+          //Going through limits
+            for (Map.Entry<Double, Limit> bidLimit : limitBids.entrySet()){
                 if (remainingVol > 0 && bidLimit.getValue().getPrice() > ord.getLimit()){
                     int tVol = 0;
                     tVol = bidLimit.getValue().popFromInsideOfLimit(remainingVol);
@@ -137,7 +250,7 @@ public class Symbol {
             }
             //clearEmptyBidLimits(); /not very efficient
             ord.setQty(ord.getQty()-tradedQty);
-            askLimits.get(ord.getLimit()).removeFromSize(tradedQty);
+            limitAsks.get(ord.getLimit()).removeFromSize(tradedQty);
         }
     }
 

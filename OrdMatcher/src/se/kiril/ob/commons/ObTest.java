@@ -17,14 +17,14 @@ public class ObTest {
         List fLines = new List();
 
         OrderBook ob = new OrderBook();
-        ParseFile pf = new ParseFile("trades.in");
+        ParseFile pf = new ParseFile("refInput.in");
         fLines = pf.getParsedFile();
         // reading the file is ~100ms
         long startTime = System.nanoTime();
 
         for (int i=0; i<fLines.getItemCount(); i++){
             ParseMessage pm = new ParseMessage(fLines.getItem(i));
-            Order newOrd = new Order(pm.getSymbol(), pm.getSide(),
+            Order newOrd = new Order(pm.getSymbol(), pm.getSide(), pm.getOrdType(),
                     pm.getPrice(), pm.getQty(), pm.getUser());
             ob.addOrder(newOrd);
         }

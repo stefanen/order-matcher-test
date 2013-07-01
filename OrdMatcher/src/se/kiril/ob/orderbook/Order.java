@@ -5,9 +5,9 @@ import java.util.Random;
 
 public class Order {
     private static volatile int ordSeqNr= 1;
-
     private final String symbol;
     private final char side;
+    private final char ordType;
     private final double limit;
     private int qty;
     private final String user;
@@ -15,9 +15,11 @@ public class Order {
     //private final long eventTime;
     private final String ordId;
 
-    public Order(String pSymbol, char pSide, double pLimit, int pQty, String pUser){
+    public Order(String pSymbol, char pSide, char pType, double pLimit, int pQty, String pUser){
+    	
         symbol = pSymbol;
         side = pSide;
+        ordType = pType;
         limit = pLimit;
         qty = pQty;
         user = pUser;
@@ -28,7 +30,7 @@ public class Order {
     private String createOrdId(long pOrdTimestamp, char pSide){
         Random rand = new Random();
         int r = rand.nextInt(999-100)+100;
-        String id = "L-"+String.valueOf(pOrdTimestamp)+"-"+r+"-"+ordSeqNr+"-"+String.valueOf(pSide);
+        String id = ordType+"-"+String.valueOf(pOrdTimestamp)+"-"+r+"-"+ordSeqNr+"-"+String.valueOf(pSide);
         return id;
     }
     private long createTimestamp(){
@@ -80,4 +82,7 @@ public class Order {
     public void setQty(int pQty){
         qty = pQty;
     }
+	public char getOrdType() {
+		return ordType;
+	}
 }
