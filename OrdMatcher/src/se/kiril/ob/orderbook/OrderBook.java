@@ -7,13 +7,13 @@ import java.util.Map;
 public class OrderBook {
 
     private Map<String, Symbol> symbols = new LinkedHashMap<String, Symbol>();
+    
     private Map<String, Order> ordersMap = new HashMap<String, Order>();
 
     public OrderBook(){
 
     }
-    //TODO get total costs from executions
-    //TODO display bestbid bestask for instrtuments
+    //TODO get total costs from executions (in some sort of exec report)
     public void addOrder(Order ord){
         if(checkSymbolExists(ord.getSymbol())){
             symbols.get(ord.getSymbol()).addOrd(ord);
@@ -51,4 +51,12 @@ public class OrderBook {
             return false;
         }
     }
+    public HashMap getPrices(){
+    	HashMap<String, Double[]> prices = new HashMap<String, Double[]>();
+    	for (Map.Entry<String, Symbol> e : symbols.entrySet()){
+    		prices.put(e.getKey(), e.getValue().getBestBidBestAsk());
+    	}
+    	return prices;
+    }
+    
 }

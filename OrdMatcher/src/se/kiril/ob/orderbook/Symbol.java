@@ -4,19 +4,24 @@ package se.kiril.ob.orderbook;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import se.kiril.ob.orderbook.commons.LimitsBinTree;
 
 
 public class Symbol {
 
     private String symbolName;
 
-    private Map<Double, Limit> limitBids = new TreeMap<Double, Limit>(Collections.reverseOrder());
+    private Map<Double, Limit> limitBids = new TreeMap<Double, Limit>();
     private Map<Double, Limit> limitAsks = new TreeMap<Double, Limit>();
     
     private LinkedList<Order> marketBids = new LinkedList<Order>();
     private LinkedList<Order> marketAsks = new LinkedList<Order>();
+    
+    protected double bestBid = 0.0;
+    protected double bestAsk = 0.0;
 
     public Symbol(String pSymName){
         setSymbolName(pSymName);
@@ -52,11 +57,13 @@ public class Symbol {
             if(limitBids.get(ord.getLimit()).getSize() <= 0){
                 limitBids.remove(ord.getLimit());
             }
+            bestBid = getHighestBid(ord);
         }else{ // asks side
             limitAsks.get(ord.getLimit()).removeOrderFromLimit(ord);
             if(limitAsks.get(ord.getLimit()).getSize() <= 0){
                 limitAsks.remove(ord.getLimit());
             }
+            bestAsk = getLowestAsk(ord);
         }
     }
 
@@ -84,6 +91,7 @@ public class Symbol {
                     // EXECUTE ORDER HERE
                     executeOrder(ord);
                 }
+                bestBid = getHighestBid(ord);
             }else{ // asks
                 if (limitAsks.containsKey(ord.getLimit())){
                     limitAsks.get(ord.getLimit()).addOrderToLimit(ord);
@@ -94,6 +102,7 @@ public class Symbol {
                     // EXECUTE ORDER HERE
                     executeOrder(ord);
                 }
+                bestAsk = getLowestAsk(ord);
             }
     	//TODO
     	//=====PEG ORDER=====
@@ -178,22 +187,53 @@ public class Symbol {
     	}else{ // ask 
     		int tradedQty = 0;
             int remainingVol = ord.getQty();
-            for (Map.Entry<Double, Limit> bidLimit : limitBids.entrySet()){
-                if (remainingVol > 0){
+            List<Double> listBidLimits = new LinkedList<Double>();
+            for (Map.Entry<Double, Limit> bLimit : limitBids.entrySet()){
+            	listBidLimits.add(bLimit.getKey());
+            }           
+            for (int i=listBidLimits.size()-1; i>=0; i--){  	
+            	//listBidLimits.get(i);
+            	if (remainingVol > 0){
                     int tVol = 0;
-                    tVol = bidLimit.getValue().popFromInsideOfLimit(remainingVol);
+                    tVol = limitBids.get(listBidLimits.get(i)).popFromInsideOfLimit(remainingVol);
                     tradedQty += tVol;
                     remainingVol -= tVol;
                 }else{
                     break;
-                }
+                }	
             }
             ord.setQty(ord.getQty()-tradedQty);
             //askLimits.get(ord.getLimit()).removeFromSize(tradedQty);
     	}
     }
     
-    
+    private Double getHighestBid(Order ord){
+    	Double highestBid = ord.getLimit();
+    	for (Map.Entry<Double, Limit> bidLimit : limitBids.entrySet()){
+    		if(highestBid!=null && highestBid < bidLimit.getKey()){
+    			highestBid = bidLimit.getKey();
+    		}
+    	}
+    	if (highestBid!= null){
+    		return highestBid;
+    	}else{
+    		return 0.0;
+    	}
+    }
+    private Double getLowestAsk(Order ord){
+    	Double lowestAsk = ord.getLimit();
+    	for (Map.Entry<Double, Limit> askLimit : limitAsks.entrySet()){
+    		if(lowestAsk!=null && lowestAsk > askLimit.getKey()){
+    			lowestAsk = askLimit.getKey();
+    		}
+    	}
+    	if (lowestAsk!= null){
+    		return lowestAsk;
+    	}else{
+    		return 0.0;
+    	}
+    	
+    }
     
     private void executeLimitOrder(Order ord){
         if (ord.getSide() == 'B'){
@@ -227,6 +267,7 @@ public class Symbol {
             int tradedQty = 0;
             int remainingVol = ord.getQty();
           //Going through market orders first
+            //TODO not correct ??
             for (Order order : marketBids){
                 if (remainingVol > 0){
                     int tVol = 0;
@@ -238,15 +279,20 @@ public class Symbol {
                 }
             }
           //Going through limits
-            for (Map.Entry<Double, Limit> bidLimit : limitBids.entrySet()){
-                if (remainingVol > 0 && bidLimit.getValue().getPrice() > ord.getLimit()){
+            List<Double> listBidLimits = new LinkedList<Double>();
+            for (Map.Entry<Double, Limit> bLimit : limitBids.entrySet()){
+            	listBidLimits.add(bLimit.getKey());
+            }
+            for (int i=listBidLimits.size()-1; i>=0; i--){  	
+            	//listBidLimits.get(i);
+            	if (remainingVol > 0 && limitBids.get(listBidLimits.get(i)).getPrice() > ord.getLimit()){
                     int tVol = 0;
-                    tVol = bidLimit.getValue().popFromInsideOfLimit(remainingVol);
+                    tVol = limitBids.get(listBidLimits.get(i)).popFromInsideOfLimit(remainingVol);
                     tradedQty += tVol;
                     remainingVol -= tVol;
                 }else{
                     break;
-                }
+                }	
             }
             //clearEmptyBidLimits(); /not very efficient
             ord.setQty(ord.getQty()-tradedQty);
@@ -261,6 +307,11 @@ public class Symbol {
     public void setSymbolName(String symbolName) {
         this.symbolName = symbolName;
     }
-
+    public Double[] getBestBidBestAsk(){
+    	Double[] prices = new Double[2];
+    	prices[0] = bestBid;
+    	prices[1] = bestAsk;
+    	return prices;
+    }
 
 }

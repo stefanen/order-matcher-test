@@ -2,6 +2,7 @@ package se.kiril.ob.orderbook;
 //t
 import java.util.Calendar;
 import java.util.Random;
+import javax.swing.*;
 
 public class Order {
     private static volatile int ordSeqNr= 1;
@@ -12,7 +13,7 @@ public class Order {
     private int qty;
     private final String user;
     private final long entryTime;
-    //private final long eventTime;
+    //private final long eventTime; (Execution report time??)
     private final String ordId;
 
     public Order(String pSymbol, char pSide, char pType, double pLimit, int pQty, String pUser){
