@@ -3,17 +3,13 @@ package se.kiril.ob.commons;
 import java.awt.List;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
-import javax.swing.JOptionPane;
 
 import se.kiril.ob.guis.PricesGui;
 import se.kiril.ob.inputs.fs.ParseFile;
 import se.kiril.ob.inputs.fs.ParseMessage;
-import se.kiril.ob.orderbook.OrderBook;
 import se.kiril.ob.orderbook.Order;
+import se.kiril.ob.orderbook.OrderBook;
 
 public class ObTest {
     public static void main(String[] args) throws IOException{

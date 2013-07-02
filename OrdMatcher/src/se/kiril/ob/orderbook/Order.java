@@ -2,7 +2,6 @@ package se.kiril.ob.orderbook;
 //t
 import java.util.Calendar;
 import java.util.Random;
-import javax.swing.*;
 
 public class Order {
     private static volatile int ordSeqNr= 1;

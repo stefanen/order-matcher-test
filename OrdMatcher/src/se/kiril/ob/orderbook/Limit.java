@@ -46,14 +46,14 @@ public class Limit {
         removeFromSize(pOrder.getQty());
     }
 
-    private void reduceOrder(Order pOrder, int pVol){
-        if (orders.contains(pOrder)){
-            pOrder.reduceQty(pVol);
-            if (pOrder.getQty() <= 0){
-                removeOrderFromLimit(pOrder);
-            }
-        }
-    }
+//    private void reduceOrder(Order pOrder, int pVol){
+//        if (orders.contains(pOrder)){
+//            pOrder.reduceQty(pVol);
+//            if (pOrder.getQty() <= 0){
+//                removeOrderFromLimit(pOrder);
+//            }
+//        }
+//    }
 
     public double getPrice(){
         return price;

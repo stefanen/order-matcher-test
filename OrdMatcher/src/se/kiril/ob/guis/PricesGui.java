@@ -1,31 +1,24 @@
 package se.kiril.ob.guis;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 public class PricesGui {
-	private String txt = "::prices::";
 	private String[] colNames ={"SYMBOL", "BID", "ASK"};
-	private JLabel textLabel = new JLabel();
-	private JLabel heading = new JLabel();
 	private JTable table = new JTable();
 	private DecimalFormat df = new DecimalFormat("0.00");
 	
-	private Object[][] data = {{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"}
-	,{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"}};
+	private Object[][] data = {{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},
+			{"-","-","-"},{"-","-","-"}	,{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},
+			{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"}
+			,{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"},{"-","-","-"}};
 	
 	public PricesGui() {
 		JFrame frame = new JFrame("Market prices");

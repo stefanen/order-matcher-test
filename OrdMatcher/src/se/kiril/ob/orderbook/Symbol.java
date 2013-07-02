@@ -1,13 +1,11 @@
 package se.kiril.ob.orderbook;
 
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import se.kiril.ob.orderbook.commons.LimitsBinTree;
 
 
 public class Symbol {
