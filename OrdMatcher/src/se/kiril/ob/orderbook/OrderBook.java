@@ -6,8 +6,8 @@ import java.util.Map;
 
 public class OrderBook {
 
-    private Map<String, Symbol> symbols = new LinkedHashMap<String, Symbol>();
-    
+    private Map<String, Symbol> symbols = new LinkedHashMap<String, Symbol>();  
+    @Deprecated
     private Map<String, Order> ordersMap = new HashMap<String, Order>();
 
     public OrderBook(){

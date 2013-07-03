@@ -12,7 +12,7 @@ public class Order {
     private int qty;
     private final String user;
     private final long entryTime;
-    //private final long eventTime; (Execution report time??)
+    //private final long eventTime; (Execution report time)
     private final String ordId;
 
     public Order(String pSymbol, char pSide, char pType, double pLimit, int pQty, String pUser){

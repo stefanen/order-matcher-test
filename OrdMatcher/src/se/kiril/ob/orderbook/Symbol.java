@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-
+//TODO Split symbol into symbolbuy and symbolask (in a separate branch)
 public class Symbol {
 
     private String symbolName;
 
-    private Map<Double, Limit> limitBids = new TreeMap<Double, Limit>();
-    private Map<Double, Limit> limitAsks = new TreeMap<Double, Limit>();
+    protected Map<Double, Limit> limitBids = new TreeMap<Double, Limit>();
+    protected Map<Double, Limit> limitAsks = new TreeMap<Double, Limit>();
     
     private LinkedList<Order> marketBids = new LinkedList<Order>();
     private LinkedList<Order> marketAsks = new LinkedList<Order>();
@@ -31,6 +31,7 @@ public class Symbol {
         addOrdToLimit(pOrd);
         //TODO This is not very efficient, need to change it.
         purgeEmptyLimits();
+        //setBestBidAsk(pOrd);
     }
     public void removeOrder(Order ord){
         removeOrdFromLimit(ord);
@@ -108,6 +109,13 @@ public class Symbol {
     		
     	}
     }
+    private void setBestBidAsk(Order ord){
+    	if (ord.getSide() == 'B' && ord.getOrdType()=='L'){
+    		bestBid = getHighestBid(ord);
+    	}else if (ord.getOrdType()== 'L'){
+    		bestAsk = getLowestAsk(ord);
+    	}
+    }
     public void purgeEmptyLimits(){
     	//TODO This could be multithreaded
         clearEmptyLimitAsks();
@@ -143,6 +151,9 @@ public class Symbol {
                 }
             }
             limitAsks = tempMap;
+            if(limitAsks.size() == 0){
+            	bestAsk = 0.0;
+            }
         }
     }
     private void clearEmptyLimitBids(){
@@ -155,6 +166,9 @@ public class Symbol {
                 }
             }
             limitBids = tempMap;
+            if(limitBids.size() == 0){
+            	bestBid = 0;
+            }
         }
     }
     private void executeOrder(Order ord){

@@ -44,6 +44,7 @@ public class Limit {
     public void removeOrderFromLimit(Order pOrder){
         orders.remove(pOrder);
         removeFromSize(pOrder.getQty());
+        
     }
 
 //    private void reduceOrder(Order pOrder, int pVol){
