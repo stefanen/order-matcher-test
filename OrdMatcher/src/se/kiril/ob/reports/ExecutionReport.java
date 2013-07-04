@@ -17,9 +17,9 @@ import se.kiril.ob.orderbook.Order;
 //reject orders
 //report post-trade fees calculations associated with a trade
 public class ExecutionReport {
-	private static volatile int reportSeqNr= 1;
-	
-	private String execId;  // identifier for exec message
+	private static volatile int reportSeqNr = 1;
+
+	private String execId; // identifier for exec message
 	private final ExecType execType; // purpose of this report
 	private final long transactTime;
 
@@ -28,74 +28,86 @@ public class ExecutionReport {
 	private String symbol;
 	private Side side;
 	private OrdType ordType;
-	private int ordQty; 
-	private int leavesQty;//Qty open for further execution
+	private int ordQty;
+	private int leavesQty;// Qty open for further execution
 	private int cumQty; // total quantity executed so far for a chain of orders
-	
-	//private double avgPx; // average price of all fills on this order
-	
-	public ExecutionReport(ExecType pExecType, Order ord){
+
+	// private double avgPx; // average price of all fills on this order
+
+	public ExecutionReport(ExecType pExecType, Order ord) {
 		execType = pExecType;
-		ordId=ord.getOrdId();
-		symbol=ord.getSymbol();
-		side=ord.getSide();
-		ordType=ord.getOrdType();
-		ordQty=ord.getQty();
-		leavesQty=ord.getLeavesQty();
-		cumQty=ord.getCumQty();
-		
+		ordId = ord.getOrdId();
+		symbol = ord.getSymbol();
+		side = ord.getSide();
+		ordType = ord.getOrdType();
+		ordQty = ord.getQty();
+		leavesQty = ord.getLeavesQty();
+		cumQty = ord.getCumQty();
+
 		transactTime = createTimestamp();
 		execId = createExecId(transactTime);
 		reportSeqNr++;
 	}
-	private long createTimestamp(){
+
+	private long createTimestamp() {
 		Calendar c = Calendar.getInstance();
-        long now = c.getTimeInMillis();
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        long msSinceMidnight = now - c.getTimeInMillis();
-        return msSinceMidnight;
+		long now = c.getTimeInMillis();
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		long msSinceMidnight = now - c.getTimeInMillis();
+		return msSinceMidnight;
 	}
-	private String createExecId(long pExecTimestamp){
+
+	private String createExecId(long pExecTimestamp) {
 		Random rand = new Random();
-        int r = rand.nextInt(999-100)+100;
-        String id = execType.toString()+"-"+String.valueOf(pExecTimestamp)+"-"+r+"-"+reportSeqNr;
-        return id;
+		int r = rand.nextInt(999 - 100) + 100;
+		String id = execType.toString() + "-" + String.valueOf(pExecTimestamp)
+				+ "-" + r + "-" + reportSeqNr;
+		return id;
 	}
-	
-	
+
 	public ExecType getExecType() {
 		return execType;
 	}
+
 	public long getTransactTime() {
 		return transactTime;
 	}
+
 	public String getOrdId() {
 		return ordId;
 	}
+
 	public String getSymbol() {
 		return symbol;
 	}
+
 	public int getOrdQty() {
 		return ordQty;
 	}
+
 	public int getCumQty() {
 		return cumQty;
 	}
+
 	public OrdType getOrdType() {
 		return ordType;
 	}
+
 	public Side getSide() {
 		return side;
 	}
+
 	public OrdStatus getOrdStatus() {
 		return ordStatus;
 	}
+
 	public String getExecId() {
 		return execId;
 	}
+
 	public int getLeavesQty() {
 		return leavesQty;
 	}
