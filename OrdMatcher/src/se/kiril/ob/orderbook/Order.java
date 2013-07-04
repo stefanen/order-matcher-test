@@ -2,20 +2,26 @@ package se.kiril.ob.orderbook;
 //t
 import java.util.Calendar;
 import java.util.Random;
+import se.kiril.ob.enums.ExecType;
+import se.kiril.ob.enums.OrdType;
+import se.kiril.ob.enums.Side;
+import se.kiril.ob.reports.ExecutionReport;
 
 public class Order {
     private static volatile int ordSeqNr= 1;
     private final String symbol;
-    private final char side;
-    private final char ordType;
+    private final Side side;
+    private final OrdType ordType;
     private final double limit;
     private int qty;
     private final String user;
     private final long entryTime;
     //private final long eventTime; (Execution report time)
     private final String ordId;
+    private int leavesQty;
+    private int cumQty;
 
-    public Order(String pSymbol, char pSide, char pType, double pLimit, int pQty, String pUser){
+    public Order(String pSymbol, Side pSide, OrdType pType, double pLimit, int pQty, String pUser){
     	
         symbol = pSymbol;
         side = pSide;
@@ -27,10 +33,20 @@ public class Order {
         ordId = createOrdId(entryTime, side);
         ordSeqNr++;
     }
-    private String createOrdId(long pOrdTimestamp, char pSide){
+    
+    
+    
+    
+    public ExecutionReport generateExecReport(ExecType execType){
+    	ExecutionReport report = new ExecutionReport(execType, this);
+    	return report;
+    }
+    
+    
+    private String createOrdId(long pOrdTimestamp, Side pSide){
         Random rand = new Random();
         int r = rand.nextInt(999-100)+100;
-        String id = ordType+"-"+String.valueOf(pOrdTimestamp)+"-"+r+"-"+ordSeqNr+"-"+String.valueOf(pSide);
+        String id = ordType.toString()+"-"+String.valueOf(pOrdTimestamp)+"-"+r+"-"+ordSeqNr+"-"+String.valueOf(pSide);
         return id;
     }
     private long createTimestamp(){
@@ -67,7 +83,7 @@ public class Order {
     public String getSymbol() {
         return symbol;
     }
-    public char getSide() {
+    public Side getSide() {
         return side;
     }
     public double getLimit() {
@@ -82,7 +98,19 @@ public class Order {
     public void setQty(int pQty){
         qty = pQty;
     }
-	public char getOrdType() {
+	public OrdType getOrdType() {
 		return ordType;
 	}
+
+
+
+
+	public int getLeavesQty() {
+		return leavesQty;
+	}
+	public int getCumQty() {
+		return cumQty;
+	}
+
+
 }

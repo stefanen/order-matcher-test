@@ -18,7 +18,7 @@ public class ObTest {
         OrderBook ob = new OrderBook();
         ParseFile pf = new ParseFile("trades.in");
         fLines = pf.getParsedFile();
-        PricesGui gui = new PricesGui();
+        //PricesGui gui = new PricesGui();
         
         long startTime = System.nanoTime(); 
         for (int i=0; i<fLines.getItemCount(); i++){
@@ -26,7 +26,7 @@ public class ObTest {
             Order newOrd = new Order(pm.getSymbol(), pm.getSide(), pm.getOrdType(),
                     pm.getPrice(), pm.getQty(), pm.getUser());
             ob.addOrder(newOrd);
-            gui.setTxt(ob.getPrices());
+            //gui.setTxt(ob.getPrices());
 //            printCurrentPrices(ob.getPrices());
         }
         

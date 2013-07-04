@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import se.kiril.ob.symbols.Symbol;
+
 public class OrderBook {
 
     private Map<String, Symbol> symbols = new LinkedHashMap<String, Symbol>();  
@@ -17,6 +19,7 @@ public class OrderBook {
     public void addOrder(Order ord){
         if(checkSymbolExists(ord.getSymbol())){
             symbols.get(ord.getSymbol()).addOrd(ord);
+
             ordersMap.put(ord.getOrdId(), ord);
         }else{
             createNewSymbol(ord.getSymbol());
@@ -32,8 +35,8 @@ public class OrderBook {
 
     private void removeOrderFromOb(Order ord){
         if (checkSymbolExists(ord.getSymbol())){
-            symbols.get(ord.getSymbol()).removeOrder(ord);
-            if (symbols.get(ord.getSymbol()).getTotaNolLimits() <= 0){
+            symbols.get(ord.getSymbol()).removeOrd(ord);
+            if (symbols.get(ord.getSymbol()).getTotaNumberOfLimits() <= 0){
                 symbols.remove(ord.getSymbol());
             }
         }else{
@@ -54,7 +57,7 @@ public class OrderBook {
     public HashMap getPrices(){
     	HashMap<String, Double[]> prices = new HashMap<String, Double[]>();
     	for (Map.Entry<String, Symbol> e : symbols.entrySet()){
-    		prices.put(e.getKey(), e.getValue().getBestBidBestAsk());
+    		//prices.put(e.getKey(), e.getValue().getBestBidBestAsk());
     	}
     	return prices;
     }

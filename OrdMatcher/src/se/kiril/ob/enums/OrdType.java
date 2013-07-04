@@ -1,8 +1,8 @@
 package se.kiril.ob.enums;
 
 public enum OrdType {
-	MARKET,
 	LIMIT,
+	MARKET,
 	STOP_LOSS,
 	STOP_LIMIT,
 	PEGGED,

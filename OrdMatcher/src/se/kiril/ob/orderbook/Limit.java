@@ -3,6 +3,9 @@ package se.kiril.ob.orderbook;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import se.kiril.ob.enums.ExecType;
+import se.kiril.ob.reports.ExecutionReport;
+
 public class Limit {
     private double price;
     private int totalQty;
@@ -37,9 +40,10 @@ public class Limit {
             }
         }
     }
-    public void addOrderToLimit(Order pOrder){
-        orders.add(pOrder);
-        addToSize(pOrder.getQty());
+    public ExecutionReport addOrderToLimit(Order ord){
+        orders.add(ord);
+        addToSize(ord.getQty());
+        return ord.generateExecReport(ExecType.NEW);
     }
     public void removeOrderFromLimit(Order pOrder){
         orders.remove(pOrder);
