@@ -1,6 +1,7 @@
 package se.kiril.ob.orderbook;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import se.kiril.ob.enums.ExecType;
@@ -10,7 +11,7 @@ public class Limit {
 	private double price;
 	private int totalQty;
 
-	private LinkedList<Order> orders = new LinkedList<Order>();
+	private LinkedHashMap<String, Order> orders = new LinkedHashMap<String, Order>();
 
 	public Limit(double pPrice) {
 		this.price = pPrice;
@@ -43,9 +44,12 @@ public class Limit {
 	}
 
 	public ExecutionReport addOrderToLimit(Order ord) {
-		orders.add(ord);
+		orders.put(ord.getOrdId(), ord);
 		addToSize(ord.getQty());
 		return ord.generateExecReport(ExecType.NEW);
+	}
+	public ExecutionReport tradeOrd(Order pOrd, Double pPrice, int pVol){
+		return orders.get(pOrd.getOrdId()).trade(pPrice, pVol);
 	}
 
 	public void removeOrderFromLimit(Order pOrder) {

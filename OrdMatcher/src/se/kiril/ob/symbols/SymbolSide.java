@@ -42,6 +42,15 @@ public class SymbolSide {
 		}
 	}
 
+	public Order execOrd(Order ord){
+		if (side == Side.ASK) {
+		} else if (side == Side.BID) {
+		}
+		return null;
+	}
+	
+	
+	
 	public ExecutionReport addLimitOrd(Order ord) {
 		if (limits.containsKey(ord.getLimit())) {
 			return limits.get(ord.getLimit()).addOrderToLimit(ord);

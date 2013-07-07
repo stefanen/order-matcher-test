@@ -4,35 +4,38 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import se.kiril.ob.reports.ExecutionReport;
 import se.kiril.ob.symbols.Symbol;
 
 public class OrderBook {
 
 	private Map<String, Symbol> symbols = new LinkedHashMap<String, Symbol>();
-	@Deprecated
-	private Map<String, Order> ordersMap = new HashMap<String, Order>();
+
+//	private Map<String, Order> ordersMap = new HashMap<String, Order>();
 
 	public OrderBook() {
 
 	}
 
 	// TODO get total costs from executions (in some sort of exec report)
-	public void addOrder(Order ord) {
+	public void execOrder(Order ord){
+		if (checkSymbolExists(ord.getSymbol())){
+			symbols.get(ord.getSymbol()).execOrd(ord);
+		} else {
+		}
+	}
+	public ExecutionReport addOrder(Order ord) {
 		if (checkSymbolExists(ord.getSymbol())) {
-			symbols.get(ord.getSymbol()).addOrd(ord);
-
-			ordersMap.put(ord.getOrdId(), ord);
+			return symbols.get(ord.getSymbol()).addOrd(ord);
 		} else {
 			createNewSymbol(ord.getSymbol());
-			symbols.get(ord.getSymbol()).addOrd(ord);
-			ordersMap.put(ord.getOrdId(), ord);
+			return symbols.get(ord.getSymbol()).addOrd(ord);
 		}
-
 	}
 
 	public void removeOrder(String ordId) {
-		removeOrderFromOb(ordersMap.get(ordId));
-		ordersMap.remove(ordId);
+//		removeOrderFromOb(ordersMap.get(ordId));
+//		ordersMap.remove(ordId);
 	}
 
 	private void removeOrderFromOb(Order ord) {
@@ -45,7 +48,7 @@ public class OrderBook {
 			System.err.println("Symbol doesn't exist in orderbook!");
 		}
 	}
-
+	//TODO Exec report when creating a new symb
 	private void createNewSymbol(String pSymName) {
 		Symbol newSymbol = new Symbol(pSymName);
 		symbols.put(newSymbol.getSymbolName(), newSymbol);

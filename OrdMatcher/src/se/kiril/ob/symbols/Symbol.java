@@ -14,13 +14,37 @@ public class Symbol {
 	public Symbol(String pSymName) {
 		this.symbolName = pSymName;
 	}
-
-	private ExecutionReport execOrd() {
-		return null;
+	private ExecutionReport fillOrd(Order pOrd){
+		if (pOrd.getSide().equals(Side.BID)){
+			return symB.overrideOrd(pOrd);
+		}else if (pOrd.getSide().equals(Side.ASK)){
+			return symB.overrideOrd(pOrd);
+		}else {
+			return null;
+		}
+	}
+	public void execOrd(Order pOrd) {
+		Order mOrd = pOrd;
+		if (mOrd.getSide().equals(Side.BID)){
+			if(mOrd.getLimit() > symS.bestLimit){
+				while (mOrd.getQty()>0){
+					if (symS.execOrd(mOrd) == null){
+						break;
+					}else{
+						mOrd = symS.execOrd(mOrd);
+						fillOrd(mOrd);
+					}
+				}
+			}else{
+				System.out.println("Cant execute");
+			}
+		}else if (mOrd.getSide().equals(Side.ASK)){
+			
+		}
 	}
 
-	public ExecutionReport removeOrd(Order ord) {
-		return null;
+	public void removeOrd(Order ord) {
+		
 	}
 
 	public ExecutionReport addOrd(Order ord) {

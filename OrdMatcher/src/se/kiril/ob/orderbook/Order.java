@@ -15,7 +15,7 @@ public class Order {
 	private final Side side;
 	private final OrdType ordType;
 	private final double limit;
-	private int qty;
+	private int ordQty;
 	private final String user;
 	private final long entryTime;
 	// private final long eventTime; (Execution report time)
@@ -30,11 +30,13 @@ public class Order {
 		side = pSide;
 		ordType = pType;
 		limit = pLimit;
-		qty = pQty;
+		ordQty = pQty;
 		user = pUser;
 		entryTime = createTimestamp();
 		ordId = createOrdId(entryTime, side);
 		ordSeqNr++;
+		cumQty = 0;
+		leavesQty= ordQty;
 	}
 
 	public ExecutionReport generateExecReport(ExecType execType) {
@@ -61,21 +63,18 @@ public class Order {
 		return msSinceMidnight;
 	}
 
-	public int trade(int pVol) {
-		int traded = 0;
-		if (pVol >= qty) {
-			traded = qty;
-			qty = 0;
-			return traded;
-		} else {
-			traded = pVol;
-			qty -= pVol;
-			return traded;
+	public ExecutionReport trade(Double pPrice, int pVol) {
+		if (pVol <= leavesQty){
+			leavesQty -= pVol;
+			cumQty += pVol;
+		}else{
+			System.err.println("Invalid trade qty during execution!");
+			return null;
 		}
 	}
 
 	public void reduceQty(int pVol) {
-		qty -= pVol;
+		ordQty -= pVol;
 	}
 
 	public String getOrdId() {
@@ -99,7 +98,7 @@ public class Order {
 	}
 
 	public int getQty() {
-		return qty;
+		return ordQty;
 	}
 
 	public String getUser() {
@@ -107,7 +106,7 @@ public class Order {
 	}
 
 	public void setQty(int pQty) {
-		qty = pQty;
+		ordQty = pQty;
 	}
 
 	public OrdType getOrdType() {

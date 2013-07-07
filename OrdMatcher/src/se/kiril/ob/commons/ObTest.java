@@ -5,27 +5,31 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import se.kiril.ob.guis.PricesGui;
 import se.kiril.ob.inputs.fs.ParseFile;
 import se.kiril.ob.inputs.fs.ParseMessage;
 import se.kiril.ob.orderbook.Order;
 import se.kiril.ob.orderbook.OrderBook;
+import se.kiril.ob.reports.ExecutionReport;
 
 public class ObTest {
 	public static void main(String[] args) throws IOException {
 		List fLines = new List();
 
 		OrderBook ob = new OrderBook();
-		ParseFile pf = new ParseFile("trades.in");
+		ParseFile pf = new ParseFile("testinput.in");
 		fLines = pf.getParsedFile();
-		// PricesGui gui = new PricesGui();
+//		PricesGui gui = new PricesGui();
 
 		long startTime = System.nanoTime();
 		for (int i = 0; i < fLines.getItemCount(); i++) {
 			ParseMessage pm = new ParseMessage(fLines.getItem(i));
 			Order newOrd = new Order(pm.getSymbol(), pm.getSide(),
 					pm.getOrdType(), pm.getPrice(), pm.getQty(), pm.getUser());
-			ob.addOrder(newOrd);
-			// gui.setTxt(ob.getPrices());
+			printExecReports(ob.addOrder(newOrd));
+			ob.execOrder(newOrd);
+//			printExecReports(ob.execOrder(newOrd));
+//			gui.setTxt(ob.getPrices());
 			// printCurrentPrices(ob.getPrices());
 		}
 
@@ -34,7 +38,9 @@ public class ObTest {
 				+ " ms");
 
 	}
-
+	public static void printExecReports(ExecutionReport report){
+		System.out.println(report.getExecId());
+	}
 	public static void printCurrentPrices(HashMap prices) {
 		HashMap<String, Double[]> tPr = new HashMap<String, Double[]>();
 		tPr = prices;
