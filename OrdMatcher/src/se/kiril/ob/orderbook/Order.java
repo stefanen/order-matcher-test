@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Random;
 
 import se.kiril.ob.enums.ExecType;
+import se.kiril.ob.enums.OrdStatus;
 import se.kiril.ob.enums.OrdType;
 import se.kiril.ob.enums.Side;
 import se.kiril.ob.reports.ExecutionReport;
@@ -15,9 +16,12 @@ public class Order {
 	private final Side side;
 	private final OrdType ordType;
 	private final double limit;
+	private double lastFillPrice;
 	private int ordQty;
 	private final String user;
 	private final long entryTime;
+	
+	protected OrdStatus ordStatus;
 	// private final long eventTime; (Execution report time)
 	private final String ordId;
 	private int leavesQty;
@@ -37,6 +41,7 @@ public class Order {
 		ordSeqNr++;
 		cumQty = 0;
 		leavesQty= ordQty;
+		ordStatus = OrdStatus.NEW;
 	}
 
 	public ExecutionReport generateExecReport(ExecType execType) {
@@ -67,6 +72,9 @@ public class Order {
 		if (pVol <= leavesQty){
 			leavesQty -= pVol;
 			cumQty += pVol;
+			lastFillPrice = pPrice;
+			ExecutionReport report = new ExecutionReport(ExecType.TRADE, this);			
+			return report;
 		}else{
 			System.err.println("Invalid trade qty during execution!");
 			return null;
@@ -120,5 +128,13 @@ public class Order {
 	public int getCumQty() {
 		return cumQty;
 	}
+	public OrdStatus getOrdStatus(){
+		return ordStatus;
+	}
+
+	public double getLastFillPrice() {
+		return lastFillPrice;
+	}
+
 
 }

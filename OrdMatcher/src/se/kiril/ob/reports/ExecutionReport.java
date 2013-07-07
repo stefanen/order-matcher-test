@@ -26,6 +26,8 @@ public class ExecutionReport {
 	private String ordId; // order identifier
 	private OrdStatus ordStatus; // current status of the order
 	private String symbol;
+	private Double limitPrice;
+	private Double lastPx;
 	private Side side;
 	private OrdType ordType;
 	private int ordQty;
@@ -39,11 +41,12 @@ public class ExecutionReport {
 		ordId = ord.getOrdId();
 		symbol = ord.getSymbol();
 		side = ord.getSide();
-		ordType = ord.getOrdType();
 		ordQty = ord.getQty();
 		leavesQty = ord.getLeavesQty();
 		cumQty = ord.getCumQty();
-
+		limitPrice = ord.getLimit();
+		lastPx = ord.getLastFillPrice();
+		ordStatus = ord.getOrdStatus();
 		transactTime = createTimestamp();
 		execId = createExecId(transactTime);
 		reportSeqNr++;
@@ -110,6 +113,12 @@ public class ExecutionReport {
 
 	public int getLeavesQty() {
 		return leavesQty;
+	}
+	public Double getLimitPrice(){
+		return limitPrice;
+	}
+	public Double getLastPx(){
+		return lastPx;
 	}
 
 }
