@@ -23,10 +23,13 @@ public class Symbol {
 			return null;
 		}
 	}
+	
+	
+	
 	public void execOrd(Order pOrd) {
 		Order mOrd = pOrd;
 		if (mOrd.getSide().equals(Side.BID)){
-			if(mOrd.getLimit() > symS.bestLimit){
+			if(mOrd.getLimitPx() > symS.bestLimit){
 				while (mOrd.getQty()>0){
 					if (symS.execOrd(mOrd) == null){
 						break;
@@ -244,7 +247,6 @@ public class Symbol {
 	// }
 	// private void executeOrder(Order ord){
 	// if (ord.getOrdType()=='L'){
-	// executeLimitOrder(ord);
 	// }else if(ord.getOrdType()=='M'){
 	// executeMarketOrder(ord);
 	// }

@@ -1,140 +1,116 @@
 package se.kiril.ob.orderbook;
 
-//t
-import java.util.Calendar;
-import java.util.Random;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import se.kiril.ob.enums.ExecType;
 import se.kiril.ob.enums.OrdStatus;
-import se.kiril.ob.enums.OrdType;
-import se.kiril.ob.enums.Side;
 import se.kiril.ob.reports.ExecutionReport;
+import se.kiril.ob.symbols.SymbolSide;
 
-public class Order {
-	private static volatile int ordSeqNr = 1;
-	private final String symbol;
-	private final Side side;
-	private final OrdType ordType;
-	private final double limit;
-	private double lastFillPrice;
-	private int ordQty;
-	private final String user;
-	private final long entryTime;
+public class Limit {
+	private double price;
+	private int totalQty;
+
+	//private LinkedHashMap<String, Order> orders = new LinkedHashMap<String, Order>();
+	private LinkedList<Order> orders = new LinkedList();
 	
-	protected OrdStatus ordStatus;
-	// private final long eventTime; (Execution report time)
-	private final String ordId;
-	private int leavesQty;
-	private int cumQty;
-
-	public Order(String pSymbol, Side pSide, OrdType pType, double pLimit,
-			int pQty, String pUser) {
-
-		symbol = pSymbol;
-		side = pSide;
-		ordType = pType;
-		limit = pLimit;
-		ordQty = pQty;
-		user = pUser;
-		entryTime = createTimestamp();
-		ordId = createOrdId(entryTime, side);
-		ordSeqNr++;
-		cumQty = 0;
-		leavesQty= ordQty;
-		ordStatus = OrdStatus.NEW;
+	public Limit(double pPrice) {
+		this.price = pPrice;
 	}
 
-	public ExecutionReport generateExecReport(ExecType execType) {
-		ExecutionReport report = new ExecutionReport(execType, this);
+	
+	public ExecutionReport tradeFromInsideOfLimit(Order pOrd){
+		Order initOrd = pOrd;
+		for (Order order : orders){
+			if (initOrd.getLeavesQty() > 0){
+				ExecutionReport cpReport = order.trade(price, initOrd.leavesQty);				
+				initOrd.leavesQty -= cpReport.getLastQty();
+				initOrd.cumQty += cpReport.getLastQty();
+				initOrd.lastQty = cpReport.getLastQty();
+				initOrd.lastPx = cpReport.getLastPx();
+				initOrd.grossTradeAmt += initOrd.lastPx* initOrd.lastQty;
+				if (initOrd.leavesQty <= 0){
+					initOrd.ordStatus = OrdStatus.FILLED;
+				}else{
+					initOrd.ordStatus = OrdStatus.PARTIALLY_FILLED;
+				}
+			}else{
+				break;
+			}
+		}
+		ExecutionReport report = new ExecutionReport(ExecType.TRADE, initOrd);
 		return report;
 	}
-
-	private String createOrdId(long pOrdTimestamp, Side pSide) {
-		Random rand = new Random();
-		int r = rand.nextInt(999 - 100) + 100;
-		String id = ordType.toString() + "-" + String.valueOf(pOrdTimestamp)
-				+ "-" + r + "-" + ordSeqNr + "-" + String.valueOf(pSide);
-		return id;
+	
+	public int popFromInsideOfLimit(int vol) {
+		int tradedQty = 0;
+		int remainingVol = vol;
+		for (Order order : orders) {
+			if (remainingVol > 0) {
+				int tVol = 0;
+				tVol = order.trade(remainingVol);
+				tradedQty += tVol;
+				remainingVol -= tVol;
+			} else {
+				break;
+			}
+		}
+		clearEmptyOrders();
+		removeFromSize(tradedQty);
+		return tradedQty;
 	}
 
-	private long createTimestamp() {
-		Calendar c = Calendar.getInstance();
-		long now = c.getTimeInMillis();
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
-		long msSinceMidnight = now - c.getTimeInMillis();
-		return msSinceMidnight;
-	}
-
-	public ExecutionReport trade(Double pPrice, int pVol) {
-		if (pVol <= leavesQty){
-			leavesQty -= pVol;
-			cumQty += pVol;
-			lastFillPrice = pPrice;
-			ExecutionReport report = new ExecutionReport(ExecType.TRADE, this);			
-			return report;
-		}else{
-			System.err.println("Invalid trade qty during execution!");
-			return null;
+	private void clearEmptyOrders() {
+		for (Iterator<Order> it = orders.iterator(); it.hasNext();) {
+			if (it.next().getQty() <= 0) {
+				it.remove();
+			}
 		}
 	}
 
-	public void reduceQty(int pVol) {
-		ordQty -= pVol;
+	public ExecutionReport addOrderToLimit(Order ord) {
+		orders.put(ord.getOrdId(), ord);
+		addToSize(ord.getLeavesQty());	
+		ExecutionReport report = new ExecutionReport(ExecType.NEW, ord);
+		return report;
+	}
+	
+	
+	public ExecutionReport tradeOrd(Order pOrd, Double pPrice, int pVol){
+		return orders.get(pOrd.getOrdId()).trade(pPrice, pVol);
 	}
 
-	public String getOrdId() {
-		return ordId;
+	public void removeOrderFromLimit(Order pOrder) {
+		orders.remove(pOrder);
+		removeFromSize(pOrder.getQty());
+
 	}
 
-	public long getEntryTime() {
-		return entryTime;
+	// private void reduceOrder(Order pOrder, int pVol){
+	// if (orders.contains(pOrder)){
+	// pOrder.reduceQty(pVol);
+	// if (pOrder.getQty() <= 0){
+	// removeOrderFromLimit(pOrder);
+	// }
+	// }
+	// }
+
+	public double getPrice() {
+		return price;
 	}
 
-	public String getSymbol() {
-		return symbol;
+	public int getSize() {
+		return totalQty;
 	}
 
-	public Side getSide() {
-		return side;
+	private void addToSize(int pVol) {
+		this.totalQty += pVol;
 	}
 
-	public double getLimit() {
-		return limit;
+	public void removeFromSize(int pVol) {
+		this.totalQty -= pVol;
 	}
-
-	public int getQty() {
-		return ordQty;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setQty(int pQty) {
-		ordQty = pQty;
-	}
-
-	public OrdType getOrdType() {
-		return ordType;
-	}
-
-	public int getLeavesQty() {
-		return leavesQty;
-	}
-
-	public int getCumQty() {
-		return cumQty;
-	}
-	public OrdStatus getOrdStatus(){
-		return ordStatus;
-	}
-
-	public double getLastFillPrice() {
-		return lastFillPrice;
-	}
-
-
 }

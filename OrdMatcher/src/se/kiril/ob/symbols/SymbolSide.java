@@ -2,6 +2,8 @@ package se.kiril.ob.symbols;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import se.kiril.ob.enums.ExecType;
@@ -42,21 +44,31 @@ public class SymbolSide {
 		}
 	}
 
-	public Order execOrd(Order ord){
+	public Order execLimOrd(Order ord){
 		if (side == Side.ASK) {
+			for (Map.Entry<Double, Limit> limit : limits.entrySet()){
+				
+			}
+			return null;
 		} else if (side == Side.BID) {
+			NavigableMap<Double, Limit> dLimits = limits.descendingMap();
+			for (NavigableMap.Entry<Double, Limit> limit : dLimits.entrySet()){
+				
+			}
+			return null;
+		} else{
+			return null;
 		}
-		return null;
 	}
 	
 	
 	
 	public ExecutionReport addLimitOrd(Order ord) {
-		if (limits.containsKey(ord.getLimit())) {
-			return limits.get(ord.getLimit()).addOrderToLimit(ord);
+		if (limits.containsKey(ord.getLimitPx())) {
+			return limits.get(ord.getLimitPx()).addOrderToLimit(ord);
 		} else {
-			createLimit(ord.getLimit());
-			return limits.get(ord.getLimit()).addOrderToLimit(ord);
+			createLimit(ord.getLimitPx());
+			return limits.get(ord.getLimitPx()).addOrderToLimit(ord);
 		}
 	}
 
