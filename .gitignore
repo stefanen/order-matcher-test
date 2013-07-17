@@ -1,3 +1,6 @@
+quickfixj/
+fixLogs/
+fixStore/
 bin/
 .metadata
 .settings/

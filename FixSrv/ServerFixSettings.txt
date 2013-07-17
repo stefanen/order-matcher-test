@@ -1,0 +1,22 @@
+[DEFAULT]# Settings which apply to all the Sessions.
+ConnectionType=acceptor
+LogonTimeout=6000
+ReconnectInterval=6030
+ResetOnLogon=Y
+FileLogPath=fixLogs
+[SESSION]# Settings specifically for one session
+BeginString=FIX.4.4
+SenderCompID=SRV-FIX
+TargetCompID=CLIENT
+StartDay=sunday
+EndDay=friday
+StartTime=00:00:00
+EndTime=00:00:00
+HeartBtInt=30
+CheckLatency=N
+MaxLatency=240
+SocketAcceptPort=12000
+SocketAcceptHost=127.0.0.1
+UseDataDictionary=Y
+DataDictionary=FIX_Spec_44.xml
+FileStorePath=fixStore
