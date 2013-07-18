@@ -1,4 +1,4 @@
-package se.kiril.tstest.fc;
+package se.kiril.tstest.fc.session;
 
 import quickfix.Application;
 import quickfix.DoNotSend;
@@ -8,7 +8,12 @@ import quickfix.IncorrectTagValue;
 import quickfix.Message;
 import quickfix.RejectLogon;
 import quickfix.SessionID;
-import quickfix.UnsupportedMessageType;	
+import quickfix.UnsupportedMessageType;
+
+import quickfix.field.Account;
+import quickfix.field.MsgType;
+import quickfix.field.Password;
+import quickfix.field.Username;
 import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.Logon;
 import quickfix.fix44.MessageCracker;
@@ -48,6 +53,13 @@ public class ClientApplicationImpl extends MessageCracker implements Application
 	public void toAdmin(Message message, SessionID sessionId) {
 		// TODO Auto-generated method stub
 		System.out.println(sessionId + " " +message);
+		
+		if (message instanceof Logon){
+//			message.setString(Username.FIELD, "User1");
+//			message.setString(Password.FIELD, "pass1");
+//			message.getHeader().setString(Account.FIELD, "user1");
+		}
+
 	}
 	@Override
 	public void toApp(Message message, SessionID sessionId) throws DoNotSend {

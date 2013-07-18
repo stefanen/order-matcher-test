@@ -1,19 +1,25 @@
-package se.kiril.tstest.fc;
+package se.kiril.tstest.fc.session;
 
 import java.awt.List;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import quickfix.Application;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
+import quickfix.Dictionary;
 import quickfix.FileLogFactory;
 import quickfix.FileStoreFactory;
+import quickfix.LogFactory;
+import quickfix.ScreenLogFactory;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionNotFound;
 import quickfix.SessionSettings;
 import quickfix.SocketInitiator;
+import quickfix.field.Account;
 import quickfix.field.BeginString;
 import quickfix.field.ClOrdID;
 import quickfix.field.HandlInst;
@@ -43,12 +49,13 @@ public class SendOrdersFromFile {
 		fLines = pf.getParsedFile();
 		System.out.println("Loaded trades from" + tradesFile);
 		try {
-			SessionSettings clientFixSettings = new SessionSettings("ClientFixSettings.txt");
+			SessionSettings clientFixSettings = new SessionSettings("FixInitiatorSettings.cfg");
+						
 			Application initiatorApplication = new ClientApplicationImpl();
 			FileStoreFactory fileStoreFactory = new FileStoreFactory(
 					clientFixSettings);
-			FileLogFactory fileLogFactory = new FileLogFactory(
-					clientFixSettings);
+//			FileLogFactory fileLogFactory = new FileLogFactory(clientFixSettings);
+			LogFactory fileLogFactory = new ScreenLogFactory(true, false, false, false);
 			DefaultMessageFactory messageFactory = new DefaultMessageFactory();
 			socketInitiator = new SocketInitiator(initiatorApplication, fileStoreFactory, clientFixSettings, fileLogFactory, messageFactory);
 			socketInitiator.start();
@@ -95,6 +102,7 @@ public class SendOrdersFromFile {
         newOrderSingle.set(new OrderQty(ord.getQty()));
         newOrderSingle.set(new Symbol(ord.getSymbol()));
         newOrderSingle.set(new Price(ord.getLimitPx()));
+        newOrderSingle.set(new Account(ord.getUser()));
       
         try {
             Session.sendToTarget(newOrderSingle, sessionID);

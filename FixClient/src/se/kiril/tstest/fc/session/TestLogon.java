@@ -1,4 +1,4 @@
-package se.kiril.tstest.fc;
+package se.kiril.tstest.fc.session;
 
 import quickfix.Application;
 import quickfix.ConfigError;
