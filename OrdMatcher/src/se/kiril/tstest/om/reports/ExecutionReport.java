@@ -10,14 +10,12 @@ import se.kiril.tstest.om.enums.Side;
 import se.kiril.tstest.om.orderbook.Order;
 
 /**
- * @author krl
- * - confirm the receipt of an order
- * - confirm changes to an existing order (i.e. accept cancel and replace requests)
- * - relay order status information
- * - relay fill information on working orders
- * - relay fill information on tradeable or restricted tradeable quotes
- * - reject orders
- * - report post-trade fees calculations associated with a trade
+ * @author krl - confirm the receipt of an order - confirm changes to an
+ *         existing order (i.e. accept cancel and replace requests) - relay
+ *         order status information - relay fill information on working orders -
+ *         relay fill information on tradeable or restricted tradeable quotes -
+ *         reject orders - report post-trade fees calculations associated with a
+ *         trade
  */
 public class ExecutionReport {
 	private static volatile int reportSeqNr = 1;
@@ -36,7 +34,8 @@ public class ExecutionReport {
 	private final OrdType ordType;
 	private final int ordQty;
 	private final int leavesQty;// Qty open for further execution
-	private final int cumQty; // total quantity executed so far for a chain of orders
+	private final int cumQty; // total quantity executed so far for a chain of
+								// orders
 	private final int lastQty;
 
 	public ExecutionReport(ExecType pExecType, Order ord) {
@@ -57,6 +56,7 @@ public class ExecutionReport {
 		execId = createExecId(reportTime);
 		reportSeqNr++;
 	}
+
 	private long createTimestamp() {
 		Calendar c = Calendar.getInstance();
 		long now = c.getTimeInMillis();
@@ -67,6 +67,7 @@ public class ExecutionReport {
 		long msSinceMidnight = now - c.getTimeInMillis();
 		return msSinceMidnight;
 	}
+
 	private String createExecId(long pExecTimestamp) {
 		Random rand = new Random();
 		int r = rand.nextInt(999 - 100) + 100;
@@ -75,19 +76,63 @@ public class ExecutionReport {
 		return id;
 	}
 
-	public ExecType getExecType() {	return execType;}
-	public long getReportTime() {return reportTime;}
-	public String getOrdId() {return ordId;}
-	public String getSymbol() {	return symbol;}
-	public int getOrdQty() {return ordQty;}
-	public int getCumQty() {return cumQty;}
-	public OrdType getOrdType() {return ordType;}
-	public Side getSide() {return side;}
-	public OrdStatus getOrdStatus() {return ordStatus;}
-	public String getExecId() {	return execId;}
-	public int getLeavesQty() {return leavesQty;}
-	public Double getLimitPrice(){return limitPx;}
-	public Double getLastPx(){return lastPx;}
-	public Double getGrossTradeAmt(){return grossTradeAmt;}
-	public int getLastQty(){return lastQty;}
+	public ExecType getExecType() {
+		return execType;
+	}
+
+	public long getReportTime() {
+		return reportTime;
+	}
+
+	public String getOrdId() {
+		return ordId;
+	}
+
+	public String getSymbol() {
+		return symbol;
+	}
+
+	public int getOrdQty() {
+		return ordQty;
+	}
+
+	public int getCumQty() {
+		return cumQty;
+	}
+
+	public OrdType getOrdType() {
+		return ordType;
+	}
+
+	public Side getSide() {
+		return side;
+	}
+
+	public OrdStatus getOrdStatus() {
+		return ordStatus;
+	}
+
+	public String getExecId() {
+		return execId;
+	}
+
+	public int getLeavesQty() {
+		return leavesQty;
+	}
+
+	public Double getLimitPrice() {
+		return limitPx;
+	}
+
+	public Double getLastPx() {
+		return lastPx;
+	}
+
+	public Double getGrossTradeAmt() {
+		return grossTradeAmt;
+	}
+
+	public int getLastQty() {
+		return lastQty;
+	}
 }

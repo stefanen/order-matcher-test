@@ -44,46 +44,44 @@ public class SymbolSide {
 		}
 	}
 
-	public Order execLimOrd(Order pOrd){
+	public Order execLimOrd(Order pOrd) {
 		Order initOrd = pOrd;
 		if (side == Side.ASK) {
-			for (Map.Entry<Double, Limit> limit : limits.entrySet()){ 
+			for (Map.Entry<Double, Limit> limit : limits.entrySet()) {
 				Double key = limit.getKey();
 				Limit value = limit.getValue();
 				Double initOrdLimPx = initOrd.getLimitPx();
-				if (initOrdLimPx >= key){
+				if (initOrdLimPx >= key) {
 					initOrd = value.tradeFromInsideOfLimit(initOrd);
-				}else{
+				} else {
 					break;
 				}
-				if(initOrd == null){
+				if (initOrd == null) {
 					break;
 				}
 			}
 			return initOrd;
 		} else if (side == Side.BID) {
 			NavigableMap<Double, Limit> dLimits = limits.descendingMap();
-			for (NavigableMap.Entry<Double, Limit> limit : dLimits.entrySet()){
+			for (NavigableMap.Entry<Double, Limit> limit : dLimits.entrySet()) {
 				Double key = limit.getKey();
 				Limit value = limit.getValue();
 				Double initOrdLimPx = initOrd.getLimitPx();
-				if (initOrdLimPx <= key){
+				if (initOrdLimPx <= key) {
 					initOrd = value.tradeFromInsideOfLimit(initOrd);
-				}else{
+				} else {
 					break;
 				}
-				if(initOrd == null){
+				if (initOrd == null) {
 					break;
 				}
 			}
 			return initOrd;
-		} else{
+		} else {
 			return null;
 		}
 	}
-	
-	
-	
+
 	public ExecutionReport addLimitOrd(Order ord) {
 		if (limits.containsKey(ord.getLimitPx())) {
 			return limits.get(ord.getLimitPx()).addOrderToLimit(ord);

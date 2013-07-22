@@ -3,8 +3,6 @@ package se.kiril.tstest.fc.fileinput;
 import quickfix.field.OrdType;
 import quickfix.field.Side;
 
-
-
 // message format:
 // "symbol side type price quantity user"
 public class ParseMessage {

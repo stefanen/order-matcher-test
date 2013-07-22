@@ -15,21 +15,21 @@ public class Symbol {
 		this.symbolName = pSymName;
 	}
 
-	
-	
-	
 	public void execOrd(Order pOrd) {
 		Order initOrd = pOrd;
-		if (initOrd.getSide().equals(Side.BID)){ // initiator is a bid, looking for asks
-			if(initOrd.getLimitPx() > symS.bestLimit){
-				//TODO Fix this
-				if (initOrd !=null && initOrd.getLeavesQty()>0 && symS.execLimOrd(initOrd) != null){
+		if (initOrd.getSide().equals(Side.BID)) { // initiator is a bid, looking
+													// for asks
+			if (initOrd.getLimitPx() > symS.bestLimit) {
+				// TODO Fix this
+				if (initOrd != null && initOrd.getLeavesQty() > 0
+						&& symS.execLimOrd(initOrd) != null) {
 					initOrd = symS.execLimOrd(initOrd);
 				}
 			}
-		}else{ // initiator is an ASK, looking for bids
-			if (initOrd.getLimitPx() < symB.bestLimit){
-				if (initOrd !=null && initOrd.getLeavesQty()>0 && symS.execLimOrd(initOrd) != null){
+		} else { // initiator is an ASK, looking for bids
+			if (initOrd.getLimitPx() < symB.bestLimit) {
+				if (initOrd != null && initOrd.getLeavesQty() > 0
+						&& symS.execLimOrd(initOrd) != null) {
 					initOrd = symB.execLimOrd(initOrd);
 				}
 			}
@@ -37,7 +37,7 @@ public class Symbol {
 	}
 
 	public void removeOrd(Order ord) {
-		
+
 	}
 
 	public ExecutionReport addOrd(Order ord) {
