@@ -18,7 +18,7 @@ Order
 |    +--- Pegged price
 |         +--- Pegged order
 +--- No price constraint
-    +--- Market order
+     +--- Market order
 
 Orders are accepted at FixSrv via a FIX session as per FIX 4.4 spec at
 http://www.fixprotocol.org/specifications/FIX.4.4
