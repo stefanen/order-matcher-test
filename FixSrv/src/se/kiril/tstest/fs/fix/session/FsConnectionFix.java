@@ -21,17 +21,17 @@ import quickfix.field.OrderQty;
 import quickfix.field.Side;
 import quickfix.fix44.ExecutionReport;
 import quickfix.fix44.NewOrderSingle;
-import se.kiril.tstest.fs.commons.OrderListener;
+import se.kiril.tstest.fs.commons.OrderListenerIf;
 import se.kiril.tstest.fs.fix.connection.ConnectionFix;
 
 public class FsConnectionFix extends ConnectionFix {
 
 	private static volatile int seqNr = 1;
 	private boolean listenerSet = false;
-	private OrderListener ordListener;
+	private OrderListenerIf ordListener;
 	protected LinkedList<NewOrderSingle> receivedOrdsQueue = new LinkedList<NewOrderSingle>();
 
-	public void setListener(OrderListener lst) {
+	public void setListener(OrderListenerIf lst) {
 		this.ordListener = lst;
 		listenerSet = true;
 	}
