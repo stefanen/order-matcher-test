@@ -1,4 +1,4 @@
-package se.kiril.tstest.fc.fix.session;
+package se.kiril.tstest.fc;
 
 import java.awt.List;
 import java.io.IOException;
@@ -18,8 +18,9 @@ import quickfix.fix44.NewOrderSingle;
 import se.kiril.tstest.fc.commons.FixOrder;
 import se.kiril.tstest.fc.fileinput.ParseFile;
 import se.kiril.tstest.fc.fileinput.ParseMessage;
+import se.kiril.tstest.fc.fix.session.FcConnectionFix;
 
-public class ClientFixSessionsStarter {
+public class FixClient {
 
 	private static FcConnectionFix fixConnection = new FcConnectionFix();
 
@@ -38,10 +39,9 @@ public class ClientFixSessionsStarter {
 			FixOrder fOrd = new FixOrder(pm.getSymbol(), pm.getSide(),
 					pm.getOrdType(), pm.getPrice(), pm.getQty(), pm.getUser());
 			fixConnection.initiatorSendMsg(createFixMsg(fOrd));
-			// throttleTps(1);
 			// Thread.sleep(2000);
 		}
-		Thread.sleep(5000); // Waiting for any remaining Exec reports
+		Thread.sleep(2000); // Waiting for any remaining Exec reports
 		fixConnection.initiatorDisconnect();
 		System.out.println("Done inserting trades.");
 	}
