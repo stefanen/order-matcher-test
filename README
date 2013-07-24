@@ -1,7 +1,25 @@
 An Orderbook test.
-Supports add / remove / execute of limit and market orders.
-Support of the FIX protocol for incoming orders.
-To do:
-Account persistence.
-Pegged orders, iceberg orders, as per NYSE's specification at 
+Supports Limit / Market / Fill-or-kill / All-or-none / Fill-and-kill order types as per NYSE's specification at 
 https://europeanequities.nyx.com/trading/order-types
+
+Order
+|--- Price constrained
+|    |--- Limit price
+|    |    |--- Quantity constrained
+|    |    |    |--- One match
+|    |    |    |    +--- Fill or kill order
+|    |    |    +--- Longer
+|    |    |         +--- All or none order
+|    |    +--- No quantity constraint
+|    |         |--- One match
+|    |         |    +--- Fill and kill order
+|    |         +--- Longer
+|    |              +--- Limit order
+|    +--- Pegged price
+|         +--- Pegged order
++--- No price constraint
+    +--- Market order
+
+Orders are accepted at FixSrv via a FIX session as per FIX 4.4 spec at
+http://www.fixprotocol.org/specifications/FIX.4.4
+and then multicasted. OrderMatcher does keeps the B/S orders in an orderbook and executes them with every order add operation.
