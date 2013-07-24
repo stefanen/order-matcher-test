@@ -106,10 +106,10 @@ public class ConnectionFix extends MessageCracker implements ConnectionFixIf,
 			while (!Session.lookupSession(sessionId).isLoggedOn()) {
 				System.out.println("Waiting for login success on session "
 						+ sessionId);
-				Thread.sleep(5000);
+				Thread.sleep(2000);
 			}
 			System.out.println("Successfully logged on...");
-			Thread.sleep(500);
+			Thread.sleep(200);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -157,7 +157,7 @@ public class ConnectionFix extends MessageCracker implements ConnectionFixIf,
 			// Message factory
 			DefaultMessageFactory messageFactory = new DefaultMessageFactory();
 			// Logging factory and setting log level here
-			LogFactory logFactory = new ScreenLogFactory(true, false, false,
+			LogFactory logFactory = new ScreenLogFactory(true, true, false,
 					false);
 			init = new ThreadedSocketInitiator(this, messageStoreFactory,
 					initSessionSettings, logFactory, messageFactory);
@@ -180,7 +180,7 @@ public class ConnectionFix extends MessageCracker implements ConnectionFixIf,
 			// Message factory
 			DefaultMessageFactory messageFactory = new DefaultMessageFactory();
 			// Logging factory and setting log level here
-			LogFactory logFactory = new ScreenLogFactory(true, false, false,
+			LogFactory logFactory = new ScreenLogFactory(false, false, false,
 					false);
 			// Creating the threaded acceptor
 			acc = new ThreadedSocketAcceptor(this, messageStoreFactory,
