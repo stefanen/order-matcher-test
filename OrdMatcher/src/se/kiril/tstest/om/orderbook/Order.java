@@ -12,7 +12,7 @@ import se.kiril.tstest.om.enums.OrdType;
 import se.kiril.tstest.om.enums.Side;
 import se.kiril.tstest.om.reports.ExecutionReport;
 
-public class Order implements Serializable{
+public class Order implements Serializable {
 	/**
 	 * 
 	 */

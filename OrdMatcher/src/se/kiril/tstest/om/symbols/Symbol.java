@@ -7,7 +7,7 @@ import se.kiril.tstest.om.enums.Side;
 import se.kiril.tstest.om.orderbook.Order;
 import se.kiril.tstest.om.reports.ExecutionReport;
 
-public class Symbol implements Serializable{
+public class Symbol implements Serializable {
 
 	/**
 	 * 
@@ -17,19 +17,24 @@ public class Symbol implements Serializable{
 	protected SymbolSide symB = new SymbolSide(Side.BID);
 	protected SymbolSide symS = new SymbolSide(Side.ASK);
 
-	
+	public int getTotalNrOrdsPerSymbol() {
+		return symB.getTotalOrdsForSide() + symS.getTotalOrdsForSide();
+	}
+
 	public Symbol(String pSymName) {
 		this.symbolName = pSymName;
 	}
-	//debug only
-	public SymbolSide getSideB(){
+
+	// debug only
+	public SymbolSide getSideB() {
 		return symB;
-	}	
-	//debug only
-	public SymbolSide getSideS(){
+	}
+
+	// debug only
+	public SymbolSide getSideS() {
 		return symS;
-	}	
-	
+	}
+
 	public void execOrd(Order pOrd) {
 		Order initOrd = pOrd;
 		if (initOrd.getSide().equals(Side.BID)) { // initiator is a bid, looking

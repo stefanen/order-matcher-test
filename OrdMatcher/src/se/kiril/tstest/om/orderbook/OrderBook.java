@@ -7,7 +7,7 @@ import java.util.Map;
 import se.kiril.tstest.om.reports.ExecutionReport;
 import se.kiril.tstest.om.symbols.Symbol;
 
-public class OrderBook implements Serializable{
+public class OrderBook implements Serializable {
 
 	/**
 	 * 
@@ -20,15 +20,25 @@ public class OrderBook implements Serializable{
 	public OrderBook() {
 
 	}
-	//DebugOnly
-	public Map<String, Symbol> getSymbolsMap(){
+
+	public int getTotalOrdsInBook() {
+		int tNr = 0;
+		for (Map.Entry<String, Symbol> e : symbols.entrySet()) {
+			tNr += e.getValue().getTotalNrOrdsPerSymbol();
+		}
+		return tNr;
+	}
+
+	// DebugOnly
+	public Map<String, Symbol> getSymbolsMap() {
 		return symbols;
 	}
-	//Debug only
-	public void setSymbolsMap(Map<String, Symbol> m){
-		symbols =m;
+
+	// Debug only
+	public void setSymbolsMap(Map<String, Symbol> m) {
+		symbols = m;
 	}
-	
+
 	public void execOrder(Order ord) {
 		if (checkSymbolExists(ord.getSymbol())) {
 			symbols.get(ord.getSymbol()).execOrd(ord);

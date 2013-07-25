@@ -13,7 +13,7 @@ import se.kiril.tstest.om.orderbook.Limit;
 import se.kiril.tstest.om.orderbook.Order;
 import se.kiril.tstest.om.reports.ExecutionReport;
 
-public class SymbolSide implements Serializable{
+public class SymbolSide implements Serializable {
 	/**
 	 * 
 	 */
@@ -27,23 +27,35 @@ public class SymbolSide implements Serializable{
 	public SymbolSide(Side pSide) {
 		side = pSide;
 	}
-	
-	//Debug only 
-	public String getSide(){
-		if (side == Side.ASK){
+
+	// Debug only
+	public String getSide() {
+		if (side == Side.ASK) {
 			return "SELL";
-		}else {
+		} else {
 			return "BUY";
 		}
 	}
-	//Debug only
-	public List<Order> getMarketOrds(){
+
+	// Debug only
+	public List<Order> getMarketOrds() {
 		return marketOrdsQueue;
 	}
-	//Debug only
-	public TreeMap<Double, Limit> getLimitsMap(){
+
+	// Debug only
+	public TreeMap<Double, Limit> getLimitsMap() {
 		return limits;
 	}
+
+	public int getTotalOrdsForSide() {
+		int tNrOrds = 0;
+		for (Map.Entry<Double, Limit> limit : limits.entrySet()) {
+			tNrOrds += limit.getValue().getNrOrds();
+		}
+		tNrOrds += marketOrdsQueue.size();
+		return tNrOrds;
+	}
+
 	private void removeLimit(double limitPrice) {
 		if (limits.get(limitPrice).getSize() == 0) {
 			limits.remove(limitPrice);

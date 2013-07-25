@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import se.kiril.tstest.om.enums.ExecType;
 import se.kiril.tstest.om.reports.ExecutionReport;
 
-public class Limit implements Serializable{
+public class Limit implements Serializable {
 	/**
 	 * 
 	 */
@@ -23,10 +23,15 @@ public class Limit implements Serializable{
 		this.price = pPrice;
 	}
 
-	//Debug 
-	public LinkedList<Order> getOrders(){
+	// Debug
+	public LinkedList<Order> getOrders() {
 		return orders;
 	}
+
+	public int getNrOrds() {
+		return orders.size();
+	}
+
 	public Order tradeFromInsideOfLimit(Order pOrd) {
 		Order initOrd = pOrd;
 		for (Order order : orders) {

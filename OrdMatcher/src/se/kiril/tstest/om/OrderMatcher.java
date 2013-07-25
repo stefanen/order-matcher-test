@@ -4,11 +4,7 @@ import java.awt.Event;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.sql.Savepoint;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import se.kiril.tstest.om.guis.OrderbookSnapshots;
 import se.kiril.tstest.om.multicast.MulticastListener;
@@ -16,13 +12,11 @@ import se.kiril.tstest.om.multicast.MulticastListenerIf;
 import se.kiril.tstest.om.orderbook.Order;
 import se.kiril.tstest.om.orderbook.OrderBook;
 
-
-
 public class OrderMatcher {
 	private static OrderbookSnapshots snapshotsGui = null;
 	private static OrderBook obSnapshot = new OrderBook();
 	private static Long snapshotTime = null;
-	
+
 	private static OrderBook ob = new OrderBook();
 	public static MulticastListener incomingOrdsListener = null;
 	private static final String ORDS_MULTICAST_ADDR = "224.223.123.53";
@@ -34,42 +28,44 @@ public class OrderMatcher {
 
 	public static void main(String[] args) {
 
-		Order testOrder = new Order("GOOG", 'B', '2', 13.24, 15.0, "testUsr");
-		ob.addOrder(testOrder);
-		Order testOrder2 = new Order("GOOG", 'S', '2', 7.15, 30.0, "testUsr2");
-		ob.addOrder(testOrder2);
+		// Order testOrder = new Order("GOOG", '1', '2', 13.24, 15.0,
+		// "testUsr");
+		// ob.addOrder(testOrder);
+		// Order testOrder2 = new Order("GOOG", '2', '2', 7.15, 30.0,
+		// "testUsr2");
+		// ob.addOrder(testOrder2);
 
-		
 		multicastsThread.start();
 		snapshotsThread.start();
 	}
-	
-	private static Thread multicastsThread = new Thread(new Runnable() {           
-		public void run() { 
-			System.out.println("Incoming orders multicast group: "+ ORDS_MULTICAST_ADDR + ":" + ORDS_MULTICAST_PORT);
-    		try {
-				incomingOrdsListener = new MulticastListener(ORDS_MULTICAST_ADDR,
-						ORDS_MULTICAST_PORT);
+
+	private static Thread multicastsThread = new Thread(new Runnable() {
+		public void run() {
+			System.out.println("Incoming orders multicast group: "
+					+ ORDS_MULTICAST_ADDR + ":" + ORDS_MULTICAST_PORT);
+			try {
+				incomingOrdsListener = new MulticastListener(
+						ORDS_MULTICAST_ADDR, ORDS_MULTICAST_PORT);
 				incomingOrdsListener.setEventListener(mtxEventListener);
 				incomingOrdsListener.listen();
-    		} catch (IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 	});
-	
-	private static Thread snapshotsThread = new Thread(new Runnable() {           
-		public void run() { 
+
+	private static Thread snapshotsThread = new Thread(new Runnable() {
+		public void run() {
 			try {
 				Thread.sleep(100);
-				//create gui
+				// create gui
 				snapshotsGui = new OrderbookSnapshots();
 				snapshotsGui.setEventListener(saveObStateEvent);
-        	} catch (InterruptedException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		} 
+		}
 	});
 
 	private static MulticastListenerIf mtxEventListener = new MulticastListenerIf() {
@@ -83,7 +79,7 @@ public class OrderMatcher {
 		public void triggerSaveStateEvent(Event e) {
 			try {
 				saveOrderbookSnapshot();
-//				updateGui();
+				// updateGui();
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			} catch (IOException e1) {
@@ -128,11 +124,13 @@ public class OrderMatcher {
 				tOrdParsed[4].split("=")[1]);
 		return newOrd;
 	}
+
 	// This is not very thread safe but it will do the job
-	protected static void saveOrderbookSnapshot() throws InterruptedException, IOException, ClassNotFoundException{
-		//serializing ob
+	protected static void saveOrderbookSnapshot() throws InterruptedException,
+			IOException, ClassNotFoundException {
+		// serializing ob
 		OrderBook tOb = ob;
-		
+
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(bos);
 		oos.writeObject(tOb);
@@ -140,10 +138,11 @@ public class OrderMatcher {
 		oos.close();
 		bos.close();
 		byte[] byteData = bos.toByteArray();
-		
+
 		snapshotTime = createTimestamp();
 		snapshotsGui.addSnapshotToList(snapshotTime, byteData);
 	}
+
 	private static long createTimestamp() {
 		Calendar c = Calendar.getInstance();
 		long now = c.getTimeInMillis();
