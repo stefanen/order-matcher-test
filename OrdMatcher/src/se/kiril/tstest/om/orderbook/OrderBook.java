@@ -1,6 +1,5 @@
 package se.kiril.tstest.om.orderbook;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,7 +15,11 @@ public class OrderBook {
 	public OrderBook() {
 
 	}
-
+	//DebugOnly
+	public Map<String, Symbol> getSymbolsMap(){
+		return symbols;
+	}
+	
 	public void execOrder(Order ord) {
 		if (checkSymbolExists(ord.getSymbol())) {
 			symbols.get(ord.getSymbol()).execOrd(ord);
@@ -38,6 +41,7 @@ public class OrderBook {
 		// ordersMap.remove(ordId);
 	}
 
+	@SuppressWarnings("unused")
 	private void removeOrderFromOb(Order ord) {
 		if (checkSymbolExists(ord.getSymbol())) {
 			symbols.get(ord.getSymbol()).removeOrd(ord);
@@ -63,12 +67,12 @@ public class OrderBook {
 		}
 	}
 
-	public HashMap getPrices() {
-		HashMap<String, Double[]> prices = new HashMap<String, Double[]>();
-		for (Map.Entry<String, Symbol> e : symbols.entrySet()) {
-			// prices.put(e.getKey(), e.getValue().getBestBidBestAsk());
-		}
-		return prices;
-	}
+	// public HashMap getPrices() {
+	// HashMap<String, Double[]> prices = new HashMap<String, Double[]>();
+	// for (Map.Entry<String, Symbol> e : symbols.entrySet()) {
+	// // prices.put(e.getKey(), e.getValue().getBestBidBestAsk());
+	// }
+	// return prices;
+	// }
 
 }

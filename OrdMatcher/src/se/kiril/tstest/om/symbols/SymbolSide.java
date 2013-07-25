@@ -22,7 +22,23 @@ public class SymbolSide {
 	public SymbolSide(Side pSide) {
 		side = pSide;
 	}
-
+	
+	//Debug only 
+	public String getSide(){
+		if (side == Side.ASK){
+			return "SELL";
+		}else {
+			return "BUY";
+		}
+	}
+	//Debug only
+	public List<Order> getMarketOrds(){
+		return marketOrdsQueue;
+	}
+	//Debug only
+	public TreeMap<Double, Limit> getLimitsMap(){
+		return limits;
+	}
 	private void removeLimit(double limitPrice) {
 		if (limits.get(limitPrice).getSize() == 0) {
 			limits.remove(limitPrice);

@@ -2,13 +2,25 @@ package se.kiril.tstest.om;
 
 import java.awt.Event;
 import java.io.IOException;
+import java.sql.Savepoint;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import se.kiril.tstest.om.guis.OrderbookSnapshots;
 import se.kiril.tstest.om.multicast.MulticastListener;
 import se.kiril.tstest.om.multicast.MulticastListenerIf;
 import se.kiril.tstest.om.orderbook.Order;
 import se.kiril.tstest.om.orderbook.OrderBook;
 
+
+
 public class OrderMatcher {
+	private static OrderbookSnapshots snapshotsGui = null;
+	private static OrderBook obSnapshot = new OrderBook();
+	private static Long snapshotTime = null;
+	
 	private static OrderBook ob = new OrderBook();
 	public static MulticastListener incomingOrdsListener = null;
 	private static final String ORDS_MULTICAST_ADDR = "224.223.123.53";
@@ -18,19 +30,62 @@ public class OrderMatcher {
 	@SuppressWarnings("unused")
 	private static final int EXEC_MULTICAST_PORT = 8887;
 
-	public static void main(String[] args) throws IOException {
-		System.out.println("Incoming orders multicast group: "
-				+ ORDS_MULTICAST_ADDR + ":" + ORDS_MULTICAST_PORT);
-		incomingOrdsListener = new MulticastListener(ORDS_MULTICAST_ADDR,
-				ORDS_MULTICAST_PORT);
-		incomingOrdsListener.setEventListener(mtxEventListener);
-		incomingOrdsListener.listen();
+	public static void main(String[] args) {
+
+		Order testOrder = new Order("GOOG", 'B', '2', 13.24, 15.0, "testUsr");
+		ob.addOrder(testOrder);
+		Order testOrder2 = new Order("GOOG", 'S', '2', 7.15, 30.0, "testUsr2");
+		ob.addOrder(testOrder2);
+
+		
+		multicastsThread.start();
+		snapshotsThread.start();
 	}
+	
+	private static Thread multicastsThread = new Thread(new Runnable() {           
+		public void run() { 
+			System.out.println("Incoming orders multicast group: "+ ORDS_MULTICAST_ADDR + ":" + ORDS_MULTICAST_PORT);
+    		try {
+				incomingOrdsListener = new MulticastListener(ORDS_MULTICAST_ADDR,
+						ORDS_MULTICAST_PORT);
+				incomingOrdsListener.setEventListener(mtxEventListener);
+				incomingOrdsListener.listen();
+    		} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	});
+	
+	private static Thread snapshotsThread = new Thread(new Runnable() {           
+		public void run() { 
+			try {
+				Thread.sleep(100);
+				//create gui
+				snapshotsGui = new OrderbookSnapshots();
+				snapshotsGui.setEventListener(saveObStateEvent);
+				Thread.sleep(100);
+        	} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} 
+	});
 
 	private static MulticastListenerIf mtxEventListener = new MulticastListenerIf() {
 		@Override
 		public void triggerMtxEvent(Event e) {
 			processQueues();
+		}
+	};
+	private static SaveObStateEventIf saveObStateEvent = new SaveObStateEventIf() {
+		@Override
+		public void triggerSaveStateEvent(Event e) {
+			try {
+				saveOrderbookSnapshot();
+				updateGui();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
 		}
 	};
 
@@ -65,5 +120,23 @@ public class OrderMatcher {
 				Double.parseDouble(tOrdParsed[8].split("=")[1]),
 				tOrdParsed[4].split("=")[1]);
 		return newOrd;
+	}
+	// This is not very thread safe but it will do the job
+	protected static void saveOrderbookSnapshot() throws InterruptedException{
+		obSnapshot = ob;
+		snapshotTime = createTimestamp();
+	}
+	private static long createTimestamp() {
+		Calendar c = Calendar.getInstance();
+		long now = c.getTimeInMillis();
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		long msSinceMidnight = now - c.getTimeInMillis();
+		return msSinceMidnight;
+	}
+	private static void updateGui(){
+		snapshotsGui.addSnapshotToList(snapshotTime, obSnapshot);
 	}
 }

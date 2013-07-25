@@ -18,6 +18,10 @@ public class Limit {
 		this.price = pPrice;
 	}
 
+	//Debug 
+	public LinkedList<Order> getOrders(){
+		return orders;
+	}
 	public Order tradeFromInsideOfLimit(Order pOrd) {
 		Order initOrd = pOrd;
 		for (Order order : orders) {

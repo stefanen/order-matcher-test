@@ -11,10 +11,19 @@ public class Symbol {
 	protected SymbolSide symB = new SymbolSide(Side.BID);
 	protected SymbolSide symS = new SymbolSide(Side.ASK);
 
+	
 	public Symbol(String pSymName) {
 		this.symbolName = pSymName;
 	}
-
+	//debug only
+	public SymbolSide getSideB(){
+		return symB;
+	}	
+	//debug only
+	public SymbolSide getSideS(){
+		return symS;
+	}	
+	
 	public void execOrd(Order pOrd) {
 		Order initOrd = pOrd;
 		if (initOrd.getSide().equals(Side.BID)) { // initiator is a bid, looking
