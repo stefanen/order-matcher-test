@@ -54,7 +54,7 @@ public class OrderbookSnapshots implements ActionListener{
 	private static Long currentObSnapshotIndex = null;
 	private static JLabel contentsLabel = new JLabel();
 	private static DefaultMutableTreeNode top = null;
-	
+
 	private static JTree tree;
 	private static DefaultMutableTreeNode category = null;
     private static DefaultMutableTreeNode symbol = null;
@@ -73,17 +73,24 @@ public class OrderbookSnapshots implements ActionListener{
 	
 	public OrderbookSnapshots(){
 		JFrame frame = new JFrame("Market prices");
+
+		saveStateButton.setPreferredSize(new Dimension(95, 35));
+		saveStateButton.setText("Save OB");
+		saveStateButton.addActionListener(this);
+		
 		
 		JPanel listPane = new JPanel();
-		listPane.add(new JLabel("OB snapshots"));
+		
+		listPane.add(saveStateButton,BorderLayout.NORTH);
+		listPane.add(new JLabel("Snapshots"),BorderLayout.NORTH);
 		listPane.setLayout(new FlowLayout(FlowLayout.CENTER));
-		listPane.setPreferredSize(new Dimension(140, 590));
+		listPane.setPreferredSize(new Dimension(110, 590));
 		listPane.setBackground(new Color(220, 220, 220));
 
 		
-		saveStateButton.setPreferredSize(new Dimension(95, 70));
-		saveStateButton.setText("Save OB");
-		saveStateButton.addActionListener(this);
+//		JButton btnNewButton = new JButton("New button");
+//		btnNewButton.setPreferredSize(new Dimension(50, 29));
+//		contentPane.add(btnNewButton, BorderLayout.NORTH);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new FlowLayout(FlowLayout.LEFT)); //
@@ -95,12 +102,12 @@ public class OrderbookSnapshots implements ActionListener{
 //		label.setLabelFor(snapshotsList);
 		snapshotsList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		snapshotsList.setLayoutOrientation(JList.VERTICAL);
-		snapshotsList.setPreferredSize(new Dimension(90, 400));
+		snapshotsList.setPreferredSize(new Dimension(75, 900));
 		snapshotsList.setVisibleRowCount(-1);
 		snapshotsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		JScrollPane listScroller = new JScrollPane(snapshotsList);
-		listScroller.setPreferredSize(new Dimension(100, 540));
+		listScroller.setPreferredSize(new Dimension(95, 480));
 		
 		
 //		listPane.add(label);
@@ -121,7 +128,7 @@ public class OrderbookSnapshots implements ActionListener{
 //		contentsLabel.setText("OB");
 		contentsPane = new JPanel();
 		contentsPane.setLayout(new FlowLayout(FlowLayout.LEFT));
-		contentsPane.setPreferredSize(new Dimension(440, 590));
+		contentsPane.setPreferredSize(new Dimension(575, 590));
 		contentsPane.setBackground(new Color(220, 220, 220));
 		
 		contentsPane.add(Box.createRigidArea(new Dimension(0,5)));
@@ -129,7 +136,7 @@ public class OrderbookSnapshots implements ActionListener{
 		contentsPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 		
 		
-		frame.add(saveStateButton);
+		//frame.add(saveStateButton);
 		frame.setLayout(new FlowLayout(FlowLayout.LEFT));
 		frame.add(listPane);
 		frame.add(contentsPane);
@@ -306,8 +313,8 @@ public class OrderbookSnapshots implements ActionListener{
 				
 			}catch(Exception e){
 			}
-			contentsLabel.setText(currentObSnapshotIndex.toString());
-			contentsPane.add(contentsLabel);
+//			contentsLabel.setText(currentObSnapshotIndex.toString());
+			contentsPane.add(contentsLabel,BorderLayout.NORTH);
 			OrderBook displayedOb = snapshotsMap.get(currentObSnapshotIndex);
 			top = new DefaultMutableTreeNode("Orderbook");
 //		    createNodes(top);
@@ -316,7 +323,7 @@ public class OrderbookSnapshots implements ActionListener{
 		    tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		    tree.setLayout(new FlowLayout(FlowLayout.LEFT));
 		    tree.setPreferredSize(new Dimension(410, 540));
-		    contentsPane.add(tree);
+		    contentsPane.add(tree,BorderLayout.NORTH);
 		}
 	}
 	private static ListSelectionListener listSelectionListener = new ListSelectionListener() {
