@@ -220,7 +220,7 @@ public class Order implements Serializable{
 		return ordQty;
 	}
 
-	public String getUser() {
+	public String getAccount() {
 		return account;
 	}
 

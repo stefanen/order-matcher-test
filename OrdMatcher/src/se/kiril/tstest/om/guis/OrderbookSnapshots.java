@@ -177,8 +177,30 @@ public class OrderbookSnapshots implements ActionListener{
 	    			limitsCatB.add(tLimit);
 	    			if (l.getValue().getOrders() != null && l.getValue().getOrders().size() > 0){
 	    				for (Order o : l.getValue().getOrders()){
-	    					DefaultMutableTreeNode tOrder = new DefaultMutableTreeNode(o);
+	    					DefaultMutableTreeNode tOrder = new DefaultMutableTreeNode(o.getLeavesQty()+"@"+o);
 	    					tLimit.add(tOrder);
+	    					DefaultMutableTreeNode tOrdId = new DefaultMutableTreeNode("OrdId="+o.getOrdId());
+	    					tOrder.add(tOrdId);
+	    					DefaultMutableTreeNode tAcc = new DefaultMutableTreeNode("Acc="+o.getAccount());
+	    					tOrder.add(tAcc);
+	    					DefaultMutableTreeNode tOrdType = new DefaultMutableTreeNode("OrdType="+o.getOrdType().toString());
+	    					tOrder.add(tOrdType);
+	    					DefaultMutableTreeNode tEntryTime = new DefaultMutableTreeNode("EntryTime="+o.getEntryTime());
+	    					tOrder.add(tEntryTime);
+	    					DefaultMutableTreeNode tOrdQty = new DefaultMutableTreeNode("OrdQty="+o.getQty());
+	    					tOrder.add(tOrdQty);
+	    					DefaultMutableTreeNode tLeavesQty = new DefaultMutableTreeNode("LeavesQty="+o.getLeavesQty());
+	    					tOrder.add(tLeavesQty);
+	    					DefaultMutableTreeNode tCumQty = new DefaultMutableTreeNode("CumulativeQty="+o.getCumQty());
+	    					tOrder.add(tCumQty);
+	    					DefaultMutableTreeNode tLastQty = new DefaultMutableTreeNode("LastQty="+o.getLastQty());
+	    					tOrder.add(tLastQty);
+	    					DefaultMutableTreeNode tLastPx = new DefaultMutableTreeNode("LastPrice="+o.getLastPx());
+	    					tOrder.add(tLastPx);
+	    					DefaultMutableTreeNode tGrossTradeAmt = new DefaultMutableTreeNode("GrossTradeAmt="+o.getGrossTradeAmt());
+	    					tOrder.add(tGrossTradeAmt);
+	    					DefaultMutableTreeNode tOrdStatus = new DefaultMutableTreeNode("OrdStatus="+o.getOrdStatus().toString());
+	    					tOrder.add(tOrdStatus);
 	    				}
 	    			}
 	    		}
@@ -187,8 +209,30 @@ public class OrderbookSnapshots implements ActionListener{
 	    	tSymbolSideBuy.add(marketsCatB);
 	    	if (s.getValue().getSideB().getMarketOrds() != null && s.getValue().getSideB().getMarketOrds().size() > 0){
 	    		for (Order o : s.getValue().getSideB().getMarketOrds()){
-	    			DefaultMutableTreeNode tOrder = new DefaultMutableTreeNode(o);
+	    			DefaultMutableTreeNode tOrder = new DefaultMutableTreeNode(o.getLeavesQty()+"@"+o);
 	    			marketsCatB.add(tOrder);
+	    			DefaultMutableTreeNode tOrdId = new DefaultMutableTreeNode("OrdId="+o.getOrdId());
+					tOrder.add(tOrdId);
+					DefaultMutableTreeNode tAcc = new DefaultMutableTreeNode("Acc="+o.getAccount());
+					tOrder.add(tAcc);
+					DefaultMutableTreeNode tOrdType = new DefaultMutableTreeNode("OrdType="+o.getOrdType().toString());
+					tOrder.add(tOrdType);
+					DefaultMutableTreeNode tEntryTime = new DefaultMutableTreeNode("EntryTime="+o.getEntryTime());
+					tOrder.add(tEntryTime);
+					DefaultMutableTreeNode tOrdQty = new DefaultMutableTreeNode("OrdQty="+o.getQty());
+					tOrder.add(tOrdQty);
+					DefaultMutableTreeNode tLeavesQty = new DefaultMutableTreeNode("LeavesQty="+o.getLeavesQty());
+					tOrder.add(tLeavesQty);
+					DefaultMutableTreeNode tCumQty = new DefaultMutableTreeNode("CumulativeQty="+o.getCumQty());
+					tOrder.add(tCumQty);
+					DefaultMutableTreeNode tLastQty = new DefaultMutableTreeNode("LastQty="+o.getLastQty());
+					tOrder.add(tLastQty);
+					DefaultMutableTreeNode tLastPx = new DefaultMutableTreeNode("LastPrice="+o.getLastPx());
+					tOrder.add(tLastPx);
+					DefaultMutableTreeNode tGrossTradeAmt = new DefaultMutableTreeNode("GrossTradeAmt="+o.getGrossTradeAmt());
+					tOrder.add(tGrossTradeAmt);
+					DefaultMutableTreeNode tOrdStatus = new DefaultMutableTreeNode("OrdStatus="+o.getOrdStatus().toString());
+					tOrder.add(tOrdStatus);
 	    		}
 	    	}
 	    	//Sell side
@@ -202,8 +246,30 @@ public class OrderbookSnapshots implements ActionListener{
 	    			limitsCatS.add(tLimit);
 	    			if (l.getValue().getOrders() != null && l.getValue().getOrders().size() > 0){
 	    				for (Order o : l.getValue().getOrders()){
-	    					DefaultMutableTreeNode tOrder = new DefaultMutableTreeNode(o);
+	    					DefaultMutableTreeNode tOrder = new DefaultMutableTreeNode(o.getLeavesQty()+"@"+o);
 	    					tLimit.add(tOrder);
+	    					DefaultMutableTreeNode tOrdId = new DefaultMutableTreeNode("OrdId="+o.getOrdId());
+	    					tOrder.add(tOrdId);
+	    					DefaultMutableTreeNode tAcc = new DefaultMutableTreeNode("Acc="+o.getAccount());
+	    					tOrder.add(tAcc);
+	    					DefaultMutableTreeNode tOrdType = new DefaultMutableTreeNode("OrdType="+o.getOrdType().toString());
+	    					tOrder.add(tOrdType);
+	    					DefaultMutableTreeNode tEntryTime = new DefaultMutableTreeNode("EntryTime="+o.getEntryTime());
+	    					tOrder.add(tEntryTime);
+	    					DefaultMutableTreeNode tOrdQty = new DefaultMutableTreeNode("OrdQty="+o.getQty());
+	    					tOrder.add(tOrdQty);
+	    					DefaultMutableTreeNode tLeavesQty = new DefaultMutableTreeNode("LeavesQty="+o.getLeavesQty());
+	    					tOrder.add(tLeavesQty);
+	    					DefaultMutableTreeNode tCumQty = new DefaultMutableTreeNode("CumulativeQty="+o.getCumQty());
+	    					tOrder.add(tCumQty);
+	    					DefaultMutableTreeNode tLastQty = new DefaultMutableTreeNode("LastQty="+o.getLastQty());
+	    					tOrder.add(tLastQty);
+	    					DefaultMutableTreeNode tLastPx = new DefaultMutableTreeNode("LastPrice="+o.getLastPx());
+	    					tOrder.add(tLastPx);
+	    					DefaultMutableTreeNode tGrossTradeAmt = new DefaultMutableTreeNode("GrossTradeAmt="+o.getGrossTradeAmt());
+	    					tOrder.add(tGrossTradeAmt);
+	    					DefaultMutableTreeNode tOrdStatus = new DefaultMutableTreeNode("OrdStatus="+o.getOrdStatus().toString());
+	    					tOrder.add(tOrdStatus);
 	    				}
 	    			}
 	    		}
@@ -212,8 +278,30 @@ public class OrderbookSnapshots implements ActionListener{
 	    	tSymbolSideSell.add(marketsCatS);
 	    	if (s.getValue().getSideS().getMarketOrds() != null && s.getValue().getSideS().getMarketOrds().size() > 0){
 	    		for (Order o : s.getValue().getSideS().getMarketOrds()){
-	    			DefaultMutableTreeNode tOrder = new DefaultMutableTreeNode(o);
+	    			DefaultMutableTreeNode tOrder = new DefaultMutableTreeNode(o.getLeavesQty()+"@"+o);
 	    			marketsCatS.add(tOrder);
+	    			DefaultMutableTreeNode tOrdId = new DefaultMutableTreeNode("OrdId="+o.getOrdId());
+					tOrder.add(tOrdId);
+					DefaultMutableTreeNode tAcc = new DefaultMutableTreeNode("Acc="+o.getAccount());
+					tOrder.add(tAcc);
+					DefaultMutableTreeNode tOrdType = new DefaultMutableTreeNode("OrdType="+o.getOrdType().toString());
+					tOrder.add(tOrdType);
+					DefaultMutableTreeNode tEntryTime = new DefaultMutableTreeNode("EntryTime="+o.getEntryTime());
+					tOrder.add(tEntryTime);
+					DefaultMutableTreeNode tOrdQty = new DefaultMutableTreeNode("OrdQty="+o.getQty());
+					tOrder.add(tOrdQty);
+					DefaultMutableTreeNode tLeavesQty = new DefaultMutableTreeNode("LeavesQty="+o.getLeavesQty());
+					tOrder.add(tLeavesQty);
+					DefaultMutableTreeNode tCumQty = new DefaultMutableTreeNode("CumulativeQty="+o.getCumQty());
+					tOrder.add(tCumQty);
+					DefaultMutableTreeNode tLastQty = new DefaultMutableTreeNode("LastQty="+o.getLastQty());
+					tOrder.add(tLastQty);
+					DefaultMutableTreeNode tLastPx = new DefaultMutableTreeNode("LastPrice="+o.getLastPx());
+					tOrder.add(tLastPx);
+					DefaultMutableTreeNode tGrossTradeAmt = new DefaultMutableTreeNode("GrossTradeAmt="+o.getGrossTradeAmt());
+					tOrder.add(tGrossTradeAmt);
+					DefaultMutableTreeNode tOrdStatus = new DefaultMutableTreeNode("OrdStatus="+o.getOrdStatus().toString());
+					tOrder.add(tOrdStatus);
 	    		}
 	    	}
 	    }
