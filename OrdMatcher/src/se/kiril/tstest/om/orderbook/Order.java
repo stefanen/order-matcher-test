@@ -2,6 +2,7 @@ package se.kiril.tstest.om.orderbook;
 
 //import java.sql.Date;
 //import java.sql.Time;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Random;
 
@@ -11,7 +12,12 @@ import se.kiril.tstest.om.enums.OrdType;
 import se.kiril.tstest.om.enums.Side;
 import se.kiril.tstest.om.reports.ExecutionReport;
 
-public class Order {
+public class Order implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9149708730169565557L;
+
 	private static volatile int ordSeqNr = 1;
 
 	private final String symbol;

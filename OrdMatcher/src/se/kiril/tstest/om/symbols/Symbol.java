@@ -1,12 +1,18 @@
 package se.kiril.tstest.om.symbols;
 
+import java.io.Serializable;
+
 import se.kiril.tstest.om.enums.OrdType;
 import se.kiril.tstest.om.enums.Side;
 import se.kiril.tstest.om.orderbook.Order;
 import se.kiril.tstest.om.reports.ExecutionReport;
 
-public class Symbol {
+public class Symbol implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3908204490753201469L;
 	private final String symbolName;
 	protected SymbolSide symB = new SymbolSide(Side.BID);
 	protected SymbolSide symS = new SymbolSide(Side.ASK);

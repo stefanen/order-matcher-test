@@ -1,12 +1,17 @@
 package se.kiril.tstest.om.orderbook;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import se.kiril.tstest.om.enums.ExecType;
 import se.kiril.tstest.om.reports.ExecutionReport;
 
-public class Limit {
+public class Limit implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3233704404868244623L;
 	private double price;
 	private int totalQty;
 

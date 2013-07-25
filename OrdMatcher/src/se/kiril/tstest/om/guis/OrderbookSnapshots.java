@@ -8,6 +8,9 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.sql.Savepoint;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -72,7 +75,7 @@ public class OrderbookSnapshots implements ActionListener{
 	
 	
 	public OrderbookSnapshots(){
-		JFrame frame = new JFrame("Market prices");
+		JFrame frame = new JFrame("Orderbook snapshots");
 
 		saveStateButton.setPreferredSize(new Dimension(95, 35));
 		saveStateButton.setText("Save OB");
@@ -131,9 +134,9 @@ public class OrderbookSnapshots implements ActionListener{
 		contentsPane.setPreferredSize(new Dimension(575, 590));
 		contentsPane.setBackground(new Color(220, 220, 220));
 		
-		contentsPane.add(Box.createRigidArea(new Dimension(0,5)));
+//		contentsPane.add(Box.createRigidArea(new Dimension(0,5)));
 //		contentsPane.add(tree);
-		contentsPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+//		contentsPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 		
 		
 		//frame.add(saveStateButton);
@@ -216,95 +219,19 @@ public class OrderbookSnapshots implements ActionListener{
 	    }
 		return top;
 	}
-	
-	
-	private static void createNodes(DefaultMutableTreeNode top) {
-       
-		System.out.println("Creating nodes...");
-
-        category = new DefaultMutableTreeNode("Symbols");
-        top.add(category);
-
-        if (currentObSnapshotIndex != null && snapshotsMap != null && snapshotsMap.get(currentObSnapshotIndex).getSymbolsMap() != null){
-        	Map<String, Symbol> tSymbols = snapshotsMap.get(currentObSnapshotIndex).getSymbolsMap();
-            for (Map.Entry<String, Symbol> e : tSymbols.entrySet()) {
-            	symbol = new DefaultMutableTreeNode(e.getValue().getSymbolName());
-                category.add(symbol);
-                //
-                SymbolSide symB = e.getValue().getSideB();
-                SymbolSide symS = e.getValue().getSideS();
-                if (symB != null){
-                	symSideB = new DefaultMutableTreeNode(symB.getSide());
-                	symbol.add(symSideB);
-                	
-                	symSideB.add(limitsC);
-                	//
-                	TreeMap<Double, Limit> limits = symB.getLimitsMap();
-                	for (Map.Entry<Double, Limit> limit : limits.entrySet()) {
-                		lim = new DefaultMutableTreeNode(limit.getValue().getPrice());
-                		limitsC.add(lim);
-                		
-                		 LinkedList<Order> orders = limit.getValue().getOrders();
-                		 for (Order o : orders) {
-                			 ord = new DefaultMutableTreeNode(o);
-                			 lim.add(ord);
-                		 }
-                		
-                	}
-                	//
-                	symSideB.add(marketsC);
-                	List<Order> markets = symB.getMarketOrds();
-                	if (markets.size() > 0) {
-                		for (int i = 0; i< markets.size(); i++){
-                			mar = new DefaultMutableTreeNode(markets.get(i));
-                			marketsC.add(mar);
-                		}
-                		
-                	}
-                }
-                if (symS != null){
-                	symSideS = new DefaultMutableTreeNode(symS.getSide());
-                	symbol.add(symSideS);
-
-                	symSideS.add(limitsC);
-                	//
-                	TreeMap<Double, Limit> limits = symS.getLimitsMap();
-                	for (Map.Entry<Double, Limit> limit : limits.entrySet()) {
-                		lim = new DefaultMutableTreeNode(limit.getValue());
-                		limitsC.add(lim);
-
-                		LinkedList<Order> orders = limit.getValue().getOrders();
-                		for (Order o : orders) {
-                			ord = new DefaultMutableTreeNode(o);
-                			lim.add(ord);
-                		}
-                	}
-                	//
-                	symSideS.add(marketsC);
-                	List<Order> markets = symS.getMarketOrds();
-                	if (markets.size() > 0) {
-                		for (int i = 0; i< markets.size(); i++){
-                			mar = new DefaultMutableTreeNode(markets.get(i));
-                			marketsC.add(mar);
-                		}
-                	}
-                }
-            }
-        }
-    }
-	
-	
-
-
-
-	public void addSnapshotToList(Long snapshotName, OrderBook ob){
-		snapshotsMap.put(snapshotName, ob);
-		listModel.addElement(snapshotName);
-
-		contentsLabel.setText(snapshotName.toString());
-		currentObSnapshotIndex = snapshotName;
-		updateContentsPane();
-		
+	public void addSnapshotToList(Long snapshotName, byte[] byteData) throws ClassNotFoundException, IOException{
+		//deserializing ob
+		ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
+		OrderBook ob = (OrderBook) new ObjectInputStream(bais).readObject();
+		if (snapshotsMap.size() < 1){
+			snapshotsMap.put(snapshotName, ob);
+			listModel.addElement(snapshotName);
+			currentObSnapshotIndex = snapshotName;
+			updateContentsPane();
+		}else{
+			snapshotsMap.put(snapshotName, ob);
+			listModel.addElement(snapshotName);
+		}
 	}
 	private static void updateContentsPane(){
 		if (currentObSnapshotIndex != null){
@@ -316,7 +243,7 @@ public class OrderbookSnapshots implements ActionListener{
 //			contentsLabel.setText(currentObSnapshotIndex.toString());
 			contentsPane.add(contentsLabel,BorderLayout.NORTH);
 			OrderBook displayedOb = snapshotsMap.get(currentObSnapshotIndex);
-			top = new DefaultMutableTreeNode("Orderbook");
+			top = new DefaultMutableTreeNode(currentObSnapshotIndex);
 //		    createNodes(top);
 			createNodesStructure(top, displayedOb);
 		    tree = new JTree(top);

@@ -1,5 +1,6 @@
 package se.kiril.tstest.om.symbols;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,11 @@ import se.kiril.tstest.om.orderbook.Limit;
 import se.kiril.tstest.om.orderbook.Order;
 import se.kiril.tstest.om.reports.ExecutionReport;
 
-public class SymbolSide {
+public class SymbolSide implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1652717513509806385L;
 	protected final Side side;
 	protected TreeMap<Double, Limit> limits = new TreeMap<Double, Limit>();
 	protected List<Order> marketOrdsQueue = new LinkedList<Order>();

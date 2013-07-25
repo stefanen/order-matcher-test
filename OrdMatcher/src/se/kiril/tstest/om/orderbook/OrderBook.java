@@ -1,13 +1,18 @@
 package se.kiril.tstest.om.orderbook;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import se.kiril.tstest.om.reports.ExecutionReport;
 import se.kiril.tstest.om.symbols.Symbol;
 
-public class OrderBook {
+public class OrderBook implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6736627822503037132L;
 	private Map<String, Symbol> symbols = new LinkedHashMap<String, Symbol>();
 
 	// private Map<String, Order> ordersMap = new HashMap<String, Order>();
@@ -18,6 +23,10 @@ public class OrderBook {
 	//DebugOnly
 	public Map<String, Symbol> getSymbolsMap(){
 		return symbols;
+	}
+	//Debug only
+	public void setSymbolsMap(Map<String, Symbol> m){
+		symbols =m;
 	}
 	
 	public void execOrder(Order ord) {

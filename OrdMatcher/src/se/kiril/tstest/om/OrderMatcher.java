@@ -1,7 +1,9 @@
 package se.kiril.tstest.om;
 
 import java.awt.Event;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.sql.Savepoint;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -64,7 +66,6 @@ public class OrderMatcher {
 				//create gui
 				snapshotsGui = new OrderbookSnapshots();
 				snapshotsGui.setEventListener(saveObStateEvent);
-				Thread.sleep(100);
         	} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -82,8 +83,14 @@ public class OrderMatcher {
 		public void triggerSaveStateEvent(Event e) {
 			try {
 				saveOrderbookSnapshot();
-				updateGui();
+//				updateGui();
 			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -122,9 +129,20 @@ public class OrderMatcher {
 		return newOrd;
 	}
 	// This is not very thread safe but it will do the job
-	protected static void saveOrderbookSnapshot() throws InterruptedException{
-		obSnapshot = ob;
+	protected static void saveOrderbookSnapshot() throws InterruptedException, IOException, ClassNotFoundException{
+		//serializing ob
+		OrderBook tOb = ob;
+		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(bos);
+		oos.writeObject(tOb);
+		oos.flush();
+		oos.close();
+		bos.close();
+		byte[] byteData = bos.toByteArray();
+		
 		snapshotTime = createTimestamp();
+		snapshotsGui.addSnapshotToList(snapshotTime, byteData);
 	}
 	private static long createTimestamp() {
 		Calendar c = Calendar.getInstance();
@@ -135,8 +153,5 @@ public class OrderMatcher {
 		c.set(Calendar.MILLISECOND, 0);
 		long msSinceMidnight = now - c.getTimeInMillis();
 		return msSinceMidnight;
-	}
-	private static void updateGui(){
-		snapshotsGui.addSnapshotToList(snapshotTime, obSnapshot);
 	}
 }
